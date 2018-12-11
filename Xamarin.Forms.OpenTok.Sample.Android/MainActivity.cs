@@ -18,7 +18,7 @@ namespace Xamarin.Forms.OpenTok.Sample.Droid
         {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
-            PlatformOpenTokService.Initialize();
+            PlatformOpenTokService.Init();
             base.OnCreate(savedInstanceState);
 
             CrossCurrentActivity.Current.Init(this, savedInstanceState);

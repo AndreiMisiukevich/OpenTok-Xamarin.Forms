@@ -4,6 +4,7 @@ using System.Linq;
 
 using Foundation;
 using UIKit;
+using Xamarin.Forms.OpenTok.iOS.Service;
 
 namespace Xamarin.Forms.OpenTok.Sample.iOS
 {
@@ -22,6 +23,7 @@ namespace Xamarin.Forms.OpenTok.Sample.iOS
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            PlatformOpenTokService.Init();
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App());
 

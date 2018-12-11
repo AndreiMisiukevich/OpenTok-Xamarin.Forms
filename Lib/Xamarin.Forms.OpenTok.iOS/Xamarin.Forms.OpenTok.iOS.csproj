@@ -65,10 +65,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
+    <Folder Include="Service\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MyClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="OpenTokPublisherViewRenderer.cs" />
+    <Compile Include="OpenTokSubscriberViewRenderer.cs" />
+    <Compile Include="Service\PlatformOpenTokService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

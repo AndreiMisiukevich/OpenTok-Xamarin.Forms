@@ -34,5 +34,14 @@
     <string>Xamarin.Forms.OpenTok.Sample</string>
     <key>XSAppIconAssets</key>
     <string>Assets.xcassets/AppIcon.appiconset</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+      <key>NSAllowsArbitraryLoads</key>
+          <true/>
+    </dict>
+    <key>NSCameraUsageDescription</key>
+    <string>use camera to start video call</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>use microphone to start video call</string>
 </dict>
 </plist>

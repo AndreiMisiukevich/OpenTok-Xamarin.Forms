@@ -38,7 +38,7 @@ namespace Xamarin.Forms.OpenTok.Android
                 base.Dispose(disposing);
                 if (disposing)
                 {
-                    PlatformOpenTokService.Instance.ClearPublisherUpdated();
+                    PlatformOpenTokService.Instance.ClearSubscribeUpdated();
                 }
             }
 
