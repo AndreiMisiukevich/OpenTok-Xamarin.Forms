@@ -8,14 +8,6 @@ namespace Xamarin.Forms.OpenTok.Sample
     {
         public App()
         {
-            var publisher = new OpenTokPublisherView();
-            AbsoluteLayout.SetLayoutFlags(publisher, AbsoluteLayoutFlags.All);
-            AbsoluteLayout.SetLayoutBounds(publisher, new Rectangle(.5, .5, .5, .5));
-
-            var subscriber = new OpenTokSubscriberView();
-            AbsoluteLayout.SetLayoutFlags(subscriber, AbsoluteLayoutFlags.All);
-            AbsoluteLayout.SetLayoutBounds(subscriber, new Rectangle(0, 1, 1, .1));
-
             MainPage = new NavigationPage(new StartPage());
         }
 
