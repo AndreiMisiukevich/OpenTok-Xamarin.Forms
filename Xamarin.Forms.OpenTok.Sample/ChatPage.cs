@@ -8,29 +8,53 @@ namespace Xamarin.Forms.OpenTok.Sample
         {
             Content = new StackLayout
             {
+                Spacing = 0,
                 Children =
                 {
                     new OpenTokPublisherView
                     {
                         WidthRequest = width,
-                        HeightRequest = height / 2 - 40
+                        HeightRequest = height / 2 - 30
                     },
                     new OpenTokSubscriberView
                     {
                         WidthRequest = width,
-                        HeightRequest = height / 2 - 40
+                        HeightRequest = height / 2 - 30
                     },
-                    new Button
+                    new StackLayout
                     {
-                        HeightRequest = 80,
-                        BackgroundColor = Color.DarkRed,
-                        TextColor = Color.White,
-                        Text = "END CALL",
-                        Command = new Command(() =>
+                        Orientation = StackOrientation.Horizontal,
+                        Spacing = 6,
+                        Children =
                         {
-                            CrossOpenTok.Current.EndSession();
-                            Navigation.PopAsync();
-                        })
+                            new Button
+                            {
+                                CornerRadius = 0,
+                                WidthRequest = width / 2 - 3,
+                                HeightRequest = 60,
+                                BackgroundColor = Color.DarkRed,
+                                TextColor = Color.White,
+                                Text = "END CALL",
+                                Command = new Command(() =>
+                                {
+                                    CrossOpenTok.Current.EndSession();
+                                    Navigation.PopAsync();
+                                })
+                            },
+                            new Button
+                            {
+                                CornerRadius = 0,
+                                WidthRequest = width / 2 - 3,
+                                HeightRequest = 60,
+                                BackgroundColor = Color.Gold,
+                                TextColor = Color.White,
+                                Text = "SWAP CAMERA",
+                                Command = new Command(() =>
+                                {
+                                    CrossOpenTok.Current.CycleCamera();
+                                })
+                            }
+                        }
                     }
                 }
             };

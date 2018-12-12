@@ -15,13 +15,20 @@ namespace Xamarin.Forms.OpenTok.Sample
         {
             using (var client = new HttpClient())
             {
-                var resp = await client.GetAsync(Config.KeysUrl);
-                var json = await resp.Content.ReadAsStringAsync();
-                var keys = JsonConvert.DeserializeObject<Keys>(json);
+                try
+                {
+                    var resp = await client.GetAsync(Config.KeysUrl);
+                    var json = await resp.Content.ReadAsStringAsync();
+                    var keys = JsonConvert.DeserializeObject<Keys>(json);
 
-                CrossOpenTok.Current.ApiKey = keys.ApiKey;
-                CrossOpenTok.Current.SessionId = keys.SessionId;
-                CrossOpenTok.Current.UserToken = keys.Token;
+                    CrossOpenTok.Current.ApiKey = keys.ApiKey;
+                    CrossOpenTok.Current.SessionId = keys.SessionId;
+                    CrossOpenTok.Current.UserToken = keys.Token;
+                }
+                catch
+                {
+                    await MainPage.DisplayAlert(null, "MAKE SURE YOU SET API URL FOR RETRIEVING NECESSARY KEYS (Config.cs) OR YOU MAY HARDCODE THEM.", "GOT IT");
+                }
             }
             CrossOpenTok.Current.Error += (m) => MainPage.DisplayAlert("ERROR", m, "OK");
         }
