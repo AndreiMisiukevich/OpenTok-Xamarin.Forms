@@ -25,7 +25,7 @@ namespace Xamarin.Forms.OpenTok.Service
                 var value = _implementation.Value;
                 if (value == null)
                 {
-                    throw new NotImplementedException("You must call Initialize method before using implementation.");
+                    throw new NotImplementedException("You must call PlatformOpenTokService.Init() in platform specific code before using this.");
                 }
                 return value;
             }
