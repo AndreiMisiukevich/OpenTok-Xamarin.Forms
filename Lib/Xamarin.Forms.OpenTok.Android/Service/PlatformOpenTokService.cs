@@ -11,10 +11,10 @@ using Xamarin.Forms.OpenTok.Service;
 
 namespace Xamarin.Forms.OpenTok.Android.Service
 {
-    public sealed class PlatformOpenTokService : OpenTokService
+    public sealed class PlatformOpenTokService : BaseOpenTokService
     {
-        public event EventHandler PublisherUpdated;
-        public event EventHandler SubscriberUpdated;
+        public event Action PublisherUpdated;
+        public event Action SubscriberUpdated;
 
         private const int RequestId = 0;
 
@@ -183,7 +183,7 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 PublisherKit.SetStyle(BaseVideoRenderer.StyleVideoScale, BaseVideoRenderer.StyleVideoFill);
                 PublisherKit.PublishAudio = IsAudioPublishingEnabled;
                 PublisherKit.PublishVideo = IsVideoPublishingEnabled;
-                PublisherUpdated?.Invoke(this, EventArgs.Empty);
+                PublisherUpdated?.Invoke();
                 Session.Publish(PublisherKit);
                 PublisherKit.PublishVideo = IsVideoPublishingEnabled;
             }
@@ -207,12 +207,12 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 SubscriberKit.SetStyle(BaseVideoRenderer.StyleVideoScale, BaseVideoRenderer.StyleVideoFill);
                 SubscriberKit.SubscribeToAudio = IsAudioSubscriptionEnabled;
                 SubscriberKit.SubscribeToVideo = IsVideoSubscriptionEnabled;
-                SubscriberUpdated?.Invoke(this, EventArgs.Empty);
+                SubscriberUpdated?.Invoke();
                 Session.Subscribe(SubscriberKit);
             }
         }
 
-        private void OnStreamDestroyed(object sender, Session.StreamDroppedEventArgs e) => SubscriberUpdated?.Invoke(this, EventArgs.Empty);
+        private void OnStreamDestroyed(object sender, Session.StreamDroppedEventArgs e) => SubscriberUpdated?.Invoke();
 
         private void OnError(object sender, Session.ErrorEventArgs e)
         {
@@ -237,9 +237,9 @@ namespace Xamarin.Forms.OpenTok.Android.Service
             {
                 if (SubscriberKit != null)
                 {
-                    SubscriberUpdated?.Invoke(this, EventArgs.Empty);
+                    SubscriberUpdated?.Invoke();
                     IsSubscriberVideoEnabled = SubscriberKit?.Stream?.HasVideo ?? false;
-                    PublisherUpdated?.Invoke(this, EventArgs.Empty);
+                    PublisherUpdated?.Invoke();
                 }
             }
         }

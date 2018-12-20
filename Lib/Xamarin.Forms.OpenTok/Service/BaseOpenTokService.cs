@@ -5,7 +5,7 @@ using System;
 
 namespace Xamarin.Forms.OpenTok.Service
 {
-    public abstract class OpenTokService : INotifyPropertyChanged
+    public abstract class BaseOpenTokService : IOpenTokService
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

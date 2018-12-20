@@ -72,6 +72,7 @@
     <Compile Include="OpenTokPublisherViewRenderer.cs" />
     <Compile Include="OpenTokSubscriberViewRenderer.cs" />
     <Compile Include="Service\PlatformOpenTokService.cs" />
+    <Compile Include="OpenTokViewRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

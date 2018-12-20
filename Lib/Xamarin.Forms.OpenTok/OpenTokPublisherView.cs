@@ -1,6 +1,6 @@
 ﻿namespace Xamarin.Forms.OpenTok
 {
-    public sealed class OpenTokPublisherView : View
+    public sealed class OpenTokPublisherView : OpenTokView
     {
     }
 }

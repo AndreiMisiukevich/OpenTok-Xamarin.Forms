@@ -6,10 +6,10 @@ using OpenTok;
 
 namespace Xamarin.Forms.OpenTok.iOS.Service
 {
-    public sealed class PlatformOpenTokService : OpenTokService
+    public sealed class PlatformOpenTokService : BaseOpenTokService
     {
-        public event EventHandler PublisherUpdated;
-        public event EventHandler SubscriberUpdated;
+        public event Action PublisherUpdated;
+        public event Action SubscriberUpdated;
 
         private readonly object _locker = new object();
 
@@ -175,7 +175,7 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
                 PublisherKit.StreamCreated += OnPublisherStreamCreated;
 
                 Session.Publish(PublisherKit, out error);
-                PublisherUpdated?.Invoke(this, EventArgs.Empty);
+                PublisherUpdated?.Invoke();
             }
         }
 
@@ -201,7 +201,7 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
             }
         }
 
-        private void OnStreamDestroyed(object sender, OTSessionDelegateStreamEventArgs e) => SubscriberUpdated?.Invoke(this, EventArgs.Empty);
+        private void OnStreamDestroyed(object sender, OTSessionDelegateStreamEventArgs e) => SubscriberUpdated?.Invoke();
 
         private void OnError(object sender, OTSessionDelegateErrorEventArgs e)
         {
@@ -213,7 +213,7 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
         => IsSubscriberVideoEnabled = false;
 
         private void OnSubscriberVideoDataReceived(object sender, EventArgs e)
-        => SubscriberUpdated?.Invoke(this, EventArgs.Empty);
+        => SubscriberUpdated?.Invoke();
 
         private void OnSubscriberVideoEnabled(object sender, OTSubscriberKitDelegateVideoEventReasonEventArgs e)
         {
@@ -229,9 +229,9 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
             {
                 if (SubscriberKit != null)
                 {
-                    SubscriberUpdated?.Invoke(this, EventArgs.Empty);
+                    SubscriberUpdated?.Invoke();
                     IsSubscriberVideoEnabled = SubscriberKit?.Stream?.HasVideo ?? false;
-                    PublisherUpdated?.Invoke(this, EventArgs.Empty);
+                    PublisherUpdated?.Invoke();
                 }
             }
         }

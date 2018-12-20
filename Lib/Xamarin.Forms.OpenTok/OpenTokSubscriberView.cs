@@ -1,6 +1,6 @@
 ﻿namespace Xamarin.Forms.OpenTok
 {
-    public sealed class OpenTokSubscriberView : View
+    public sealed class OpenTokSubscriberView : OpenTokView
     {
     }
 }
