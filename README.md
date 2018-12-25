@@ -53,6 +53,7 @@ if(!CrossOpenTok.Current.TryStartSession())
 {
     return;
 }
+//Session is starting, you may show Chat Page
 ```
 
 Use **OpenTokPublisherView** and **OpenTokSubscriberView** for showing video from your camera and for recieving video from another chat participant. Just put them to any laouyt as you wish. When session was started, they would recieve video.
