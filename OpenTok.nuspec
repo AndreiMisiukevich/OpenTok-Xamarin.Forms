@@ -7,6 +7,7 @@
     <authors>Andrei Misiukevich</authors>
     <owners>Andrei Misiukevich</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/AndreiMisiukevich/OpenTok-Xamarin.Forms/LICENSE</licenseUrl>
     <projectUrl>https://github.com/AndreiMisiukevich/OpenTok-Xamarin.Forms</projectUrl>
     <iconUrl>https://cdn0.iconfinder.com/data/icons/zondicons/20/mobile-devices-512.png</iconUrl>
     <description>OpenTok for Xamarin.Forms</description>
