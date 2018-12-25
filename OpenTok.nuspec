@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Xamarin.Forms.OpenTok</id>
+    <version>1.0.0</version>
+    <title>Xamarin.Forms.OpenTok</title>
+    <authors>Andrei Misiukevich</authors>
+    <owners>Andrei Misiukevich</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectUrl>https://github.com/AndreiMisiukevich/OpenTok-Xamarin.Forms</projectUrl>
+    <iconUrl>https://cdn0.iconfinder.com/data/icons/zondicons/20/mobile-devices-512.png</iconUrl>
+    <description>OpenTok for Xamarin.Forms</description>
+    <summary>OpenTok for Xamarin.Forms</summary>
+    <tags>opentok, videochat, video, chat, video streaming, tokbox, xamarin forms, audio</tags>
+    <dependencies>
+      <group>
+          <dependency id="Xamarin.Forms" version="3.0" />
+      </group>
+	  <group targetFramework="Xamarin.iOS10">
+          <dependency id="Xamarin.OpenTok.iOS" version="2.15.2" />
+      </group>
+	  <group targetFramework="MonoAndroid10">
+		  <dependency id="Xamarin.OpenTok.Android" version="2.15.2" />
+	  </group>			
+    </dependencies>
+    <releaseNotes>
+      See Changelog: https://github.com/AndreiMisiukevich/OpenTok-Xamarin.Forms/releases
+    </releaseNotes>
+  </metadata>
+  <files>
+
+    <!--Net Standard1.0-->
+    <file src="Lib\Xamarin.Forms.OpenTok\bin\Release\netstandard2.0\Xamarin.Forms.OpenTok.dll" target="lib\netstandard1.0\Xamarin.Forms.OpenTok.dll" />
+    <file src="Lib\Xamarin.Forms.OpenTok\bin\Release\netstandard2.0\Xamarin.Forms.OpenTok.pdb" target="lib\netstandard1.0\Xamarin.Forms.OpenTok.pdb" />
+
+    <!--Net Standard2.0-->
+    <file src="Lib\Xamarin.Forms.OpenTok\bin\Release\netstandard2.0\Xamarin.Forms.OpenTok.dll" target="lib\netstandard2.0\Xamarin.Forms.OpenTok.dll" />
+    <file src="Lib\Xamarin.Forms.OpenTok\bin\Release\netstandard2.0\Xamarin.Forms.OpenTok.pdb" target="lib\netstandard2.0\Xamarin.Forms.OpenTok.pdb" />
+
+    <!--Core PCL-->
+    <file src="Lib\Xamarin.Forms.OpenTok\bin\Release\netstandard2.0\Xamarin.Forms.OpenTok.dll" target="lib\portable-win+net45+wp80+win81+wpa81\Xamarin.Forms.OpenTok.dll" />
+    <file src="Lib\Xamarin.Forms.OpenTok\bin\Release\netstandard2.0\Xamarin.Forms.OpenTok.pdb" target="lib\portable-win+net45+wp80+win81+wpa81\Xamarin.Forms.OpenTok.pdb" />
+
+    <!--Xamarin.Android-->
+    <file src="Lib\Xamarin.Forms.OpenTok\bin\Release\netstandard2.0\Xamarin.Forms.OpenTok.dll" target="lib\MonoAndroid10\Xamarin.Forms.OpenTok.dll" />
+    <file src="Lib\Xamarin.Forms.OpenTok.Android\bin\Release\Xamarin.Forms.OpenTok.Android.dll" target="lib\MonoAndroid10\Xamarin.Forms.OpenTok.Android.dll" />
+    <file src="Lib\Xamarin.Forms.OpenTok\bin\Release\netstandard2.0\Xamarin.Forms.OpenTok.pdb" target="lib\MonoAndroid10\Xamarin.Forms.OpenTok.pdb" />
+    <file src="Lib\Xamarin.Forms.OpenTok.Android\bin\Release\Xamarin.Forms.OpenTok.Android.pdb" target="lib\MonoAndroid10\Xamarin.Forms.OpenTok.Android.pdb" />
+
+    <!--Xamarin.iOS-->
+    <file src="Lib\Xamarin.Forms.OpenTok\bin\Release\netstandard2.0\Xamarin.Forms.OpenTok.dll" target="lib\Xamarin.iOS10\Xamarin.Forms.OpenTok.dll" />
+    <file src="Lib\Xamarin.Forms.OpenTok.iOS\bin\Release\Xamarin.Forms.OpenTok.iOS.dll" target="lib\Xamarin.iOS10\Xamarin.Forms.OpenTok.iOS.dll" />
+    <file src="Lib\Xamarin.Forms.OpenTok\bin\Release\netstandard2.0\Xamarin.Forms.OpenTok.pdb" target="lib\Xamarin.iOS10\Xamarin.Forms.OpenTok.dll" />
+    <file src="Lib\Xamarin.Forms.OpenTok.iOS\bin\Release\Xamarin.Forms.OpenTok.iOS.pdb" target="lib\Xamarin.iOS10\Xamarin.Forms.OpenTok.iOS.dll" />
+
+  </files>
+</package>
