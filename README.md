@@ -57,6 +57,66 @@ if(!CrossOpenTok.Current.TryStartSession())
 
 Use **OpenTokPublisherView** and **OpenTokSubscriberView** for showing video from your camera and for recieving video from another chat participant. Just put them to any laouyt as you wish. When session was started, they would recieve video.
 
+```csharp
+public class ChatPage : ContentPage
+    {
+        public ChatPage(double width, double height)
+        {
+            Content = new StackLayout
+            {
+                Spacing = 0,
+                Children =
+                {
+                    new OpenTokPublisherView
+                    {
+                        WidthRequest = width,
+                        HeightRequest = height / 2 - 30
+                    },
+                    new OpenTokSubscriberView
+                    {
+                        WidthRequest = width,
+                        HeightRequest = height / 2 - 30
+                    },
+                    new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        Spacing = 6,
+                        Children =
+                        {
+                            new Button
+                            {
+                                CornerRadius = 0,
+                                WidthRequest = width / 2 - 3,
+                                HeightRequest = 60,
+                                BackgroundColor = Color.DarkRed,
+                                TextColor = Color.White,
+                                Text = "END CALL",
+                                Command = new Command(() =>
+                                {
+                                    CrossOpenTok.Current.EndSession();
+                                    Navigation.PopAsync();
+                                })
+                            },
+                            new Button
+                            {
+                                CornerRadius = 0,
+                                WidthRequest = width / 2 - 3,
+                                HeightRequest = 60,
+                                BackgroundColor = Color.Gold,
+                                TextColor = Color.White,
+                                Text = "SWAP CAMERA",
+                                Command = new Command(() =>
+                                {
+                                    CrossOpenTok.Current.CycleCamera();
+                                })
+                            }
+                        }
+                    }
+                }
+            };
+        }
+    }
+```
 
 ## License
 The MIT License (MIT) see [License file](LICENSE)
