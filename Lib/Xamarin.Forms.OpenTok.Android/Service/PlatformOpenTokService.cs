@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using Android;
 using Android.Content.PM;
+using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Com.Opentok.Android;
@@ -11,6 +12,7 @@ using Xamarin.Forms.OpenTok.Service;
 
 namespace Xamarin.Forms.OpenTok.Android.Service
 {
+    [Preserve(AllMembers = true)]
     public sealed class PlatformOpenTokService : BaseOpenTokService
     {
         public event Action PublisherUpdated;
@@ -44,7 +46,12 @@ namespace Xamarin.Forms.OpenTok.Android.Service
 
         public void ClearSubscribeUpdated() => SubscriberUpdated = null;
 
-        public static void Init() => CrossOpenTok.Init(() => new PlatformOpenTokService());
+        public static void Init()
+        {
+            OpenTokPublisherViewRenderer.Preserve();
+            OpenTokSubscriberViewRenderer.Preserve();
+            CrossOpenTok.Init(() => new PlatformOpenTokService());
+        }
 
         public override bool CheckPermissions()
         {

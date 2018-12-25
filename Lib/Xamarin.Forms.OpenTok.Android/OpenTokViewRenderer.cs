@@ -1,9 +1,11 @@
 ﻿using Xamarin.Forms.Platform.Android;
 using Android.Content;
 using AView = Android.Views.View;
+using Android.Runtime;
 
 namespace Xamarin.Forms.OpenTok.Android
 {
+    [Preserve(AllMembers = true)]
     public abstract class OpenTokViewRenderer : ViewRenderer
     {
         private AView _defaultView;

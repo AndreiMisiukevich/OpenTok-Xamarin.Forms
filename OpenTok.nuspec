@@ -17,12 +17,12 @@
       <group>
           <dependency id="Xamarin.Forms" version="3.0" />
       </group>
-	  <group targetFramework="Xamarin.iOS10">
+	    <group targetFramework="Xamarin.iOS10">
           <dependency id="Xamarin.OpenTok.iOS" version="2.15.2" />
       </group>
-	  <group targetFramework="MonoAndroid10">
-		  <dependency id="Xamarin.OpenTok.Android" version="2.15.2" />
-	  </group>			
+	    <group targetFramework="MonoAndroid10">
+		      <dependency id="Xamarin.OpenTok.Android" version="2.15.2" />
+	    </group>			
     </dependencies>
     <releaseNotes>
       See Changelog: https://github.com/AndreiMisiukevich/OpenTok-Xamarin.Forms/releases

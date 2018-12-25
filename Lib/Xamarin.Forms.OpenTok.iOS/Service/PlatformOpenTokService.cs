@@ -3,9 +3,11 @@ using System.ComponentModel;
 using Xamarin.Forms.OpenTok.Service;
 using AVFoundation;
 using OpenTok;
+using Foundation;
 
 namespace Xamarin.Forms.OpenTok.iOS.Service
 {
+    [Preserve(AllMembers = true)]
     public sealed class PlatformOpenTokService : BaseOpenTokService
     {
         public event Action PublisherUpdated;
@@ -28,7 +30,12 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
 
         public void ClearSubscribeUpdated() => SubscriberUpdated = null;
 
-        public static void Init() => CrossOpenTok.Init(() => new PlatformOpenTokService());
+        public static void Init()
+        {
+            OpenTokPublisherViewRenderer.Preserve();
+            OpenTokSubscriberViewRenderer.Preserve();
+            CrossOpenTok.Init(() => new PlatformOpenTokService());
+        }
 
         public override bool TryStartSession()
         {

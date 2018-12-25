@@ -1,8 +1,10 @@
 ﻿using Xamarin.Forms.Platform.iOS;
 using UIKit;
+using Foundation;
 
 namespace Xamarin.Forms.OpenTok.iOS
 {
+    [Preserve(AllMembers = true)]
     public abstract class OpenTokViewRenderer : ViewRenderer
     {
         private UIView _defaultView;
