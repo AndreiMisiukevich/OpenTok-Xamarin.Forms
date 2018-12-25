@@ -44,10 +44,7 @@ namespace Xamarin.Forms.OpenTok.Android.Service
 
         public void ClearSubscribeUpdated() => SubscriberUpdated = null;
 
-        public static void Init()
-        {
-            CrossOpenTok.Initialize(() => new PlatformOpenTokService());
-        }
+        public static void Init() => CrossOpenTok.Init(() => new PlatformOpenTokService());
 
         public override bool CheckPermissions()
         {

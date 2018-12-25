@@ -61,9 +61,6 @@
       <HintPath>..\..\packages\Plugin.CurrentActivity.2.1.0.4\lib\monoandroid44\Plugin.CurrentActivity.dll</HintPath>
     </Reference>
     <Reference Include="Java.Interop" />
-    <Reference Include="Xamarin.OpenTok.Android">
-      <HintPath>..\..\packages\Xamarin.OpenTok.Android.2.15.1\lib\MonoAndroid\Xamarin.OpenTok.Android.dll</HintPath>
-    </Reference>
     <Reference Include="Xamarin.Android.Support.Annotations">
       <HintPath>..\..\packages\Xamarin.Android.Support.Annotations.28.0.0\lib\monoandroid90\Xamarin.Android.Support.Annotations.dll</HintPath>
     </Reference>
@@ -177,6 +174,9 @@
     </Reference>
     <Reference Include="Xamarin.Android.Support.v7.MediaRouter">
       <HintPath>..\..\packages\Xamarin.Android.Support.v7.MediaRouter.28.0.0\lib\monoandroid90\Xamarin.Android.Support.v7.MediaRouter.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.OpenTok.Android">
+      <HintPath>..\..\packages\Xamarin.OpenTok.Android.2.15.2\lib\MonoAndroid\Xamarin.OpenTok.Android.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

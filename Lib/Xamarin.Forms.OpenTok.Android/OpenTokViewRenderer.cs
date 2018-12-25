@@ -6,11 +6,15 @@ namespace Xamarin.Forms.OpenTok.Android
 {
     public abstract class OpenTokViewRenderer : ViewRenderer
     {
+        private AView _defaultView;
+
         public OpenTokViewRenderer(Context context) : base(context)
         {
         }
 
         protected OpenTokView OpenTokView => Element as OpenTokView;
+
+        protected AView DefaultView => _defaultView ?? (_defaultView = new AView(Context));
 
         protected override void OnElementChanged(ElementChangedEventArgs<View> e)
         {
@@ -32,14 +36,12 @@ namespace Xamarin.Forms.OpenTok.Android
         protected void ResetControl()
         {
             var view = GetNativeView();
-            OpenTokView.IsVideoRunning = view != null;
-            view = view ?? new AView(Context);
-
-            if (Control == view)
+            OpenTokView?.SetIsVideoViewRunning(view != null);
+            view = view ?? DefaultView;
+            if (Control != view)
             {
-                return;
+                SetNativeControl(view);
             }
-            SetNativeControl(view);
         }
 
         protected abstract AView GetNativeView();
