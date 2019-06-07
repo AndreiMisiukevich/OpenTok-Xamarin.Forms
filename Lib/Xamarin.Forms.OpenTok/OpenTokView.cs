@@ -1,4 +1,5 @@
-﻿namespace Xamarin.Forms.OpenTok
+﻿using System.ComponentModel;
+namespace Xamarin.Forms.OpenTok
 {
     public abstract class OpenTokView : View
     {
@@ -10,6 +11,7 @@
             set => SetValue(IsVideoViewRunningProperty, value);
         }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public void SetIsVideoViewRunning(bool value) => IsVideoViewRunning = value;
     }
 }

@@ -60,7 +60,7 @@
       <HintPath>..\..\packages\Xamarin.Forms.3.6.0.344457\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.OpenTok.iOS">
-      <HintPath>..\..\packages\Xamarin.OpenTok.iOS.2.15.4\lib\Xamarin.iOS10\Xamarin.OpenTok.iOS.dll</HintPath>
+      <HintPath>..\..\packages\Xamarin.OpenTok.iOS.2.16.1\lib\Xamarin.iOS10\Xamarin.OpenTok.iOS.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

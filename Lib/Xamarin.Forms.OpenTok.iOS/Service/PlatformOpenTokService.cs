@@ -166,19 +166,19 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
                     return;
                 }
 
-                OTError error;
                 PublisherKit = new OTPublisher(null, new OTPublisherSettings
                 {
                     Name = "XamarinOpenTok",
                     CameraFrameRate = OTCameraCaptureFrameRate.OTCameraCaptureFrameRate15FPS,
                     CameraResolution = OTCameraCaptureResolution.High,
-                });
-
-                PublisherKit.PublishVideo = IsVideoPublishingEnabled;
-                PublisherKit.PublishAudio = IsAudioPublishingEnabled;
+                })
+                {
+                    PublishVideo = IsVideoPublishingEnabled,
+                    PublishAudio = IsAudioPublishingEnabled
+                };
                 PublisherKit.StreamCreated += OnPublisherStreamCreated;
 
-                Session.Publish(PublisherKit, out error);
+                Session.Publish(PublisherKit, out OTError error);
                 PublisherUpdated?.Invoke();
             }
         }
@@ -192,16 +192,17 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
                     return;
                 }
 
-                SubscriberKit = new OTSubscriber(e.Stream, null);
-                SubscriberKit.SubscribeToVideo = IsVideoSubscriptionEnabled;
+                SubscriberKit = new OTSubscriber(e.Stream, null)
+                {
+                    SubscribeToVideo = IsVideoSubscriptionEnabled
+                };
                 SubscriberKit.SubscribeToVideo = IsAudioSubscriptionEnabled;
                 SubscriberKit.DidConnectToStream += OnSubscriberDidConnectToStream;
                 SubscriberKit.VideoDataReceived += OnSubscriberVideoDataReceived;
                 SubscriberKit.VideoEnabled += OnSubscriberVideoEnabled;
                 SubscriberKit.VideoDisabled += OnSubscriberVideoDisabled;
 
-                OTError error;
-                Session.Subscribe(SubscriberKit, out error);
+                Session.Subscribe(SubscriberKit, out OTError error);
             }
         }
 
