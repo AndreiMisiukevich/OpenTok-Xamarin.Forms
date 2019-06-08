@@ -19,7 +19,7 @@ namespace Xamarin.Forms.OpenTok.Sample
                             {
                                 return;
                             }
-                            Navigation.PushAsync(new ChatPage(Width, Height));
+                            Navigation.PushAsync(new ChatPage());
                         })
                     }
                 }

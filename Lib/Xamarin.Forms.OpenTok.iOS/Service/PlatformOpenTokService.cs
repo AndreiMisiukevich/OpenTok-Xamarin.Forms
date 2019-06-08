@@ -4,6 +4,7 @@ using Xamarin.Forms.OpenTok.Service;
 using AVFoundation;
 using OpenTok;
 using Foundation;
+using System.Threading.Tasks;
 
 namespace Xamarin.Forms.OpenTok.iOS.Service
 {
@@ -56,10 +57,10 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
             Session.StreamCreated += OnStreamCreated;
             Session.StreamDestroyed += OnStreamDestroyed;
             Session.DidFailWithError += OnError;
+            Session.ReceivedSignalType += OnSignalReceived;
             Session.Init();
 
-            OTError error;
-            Session.ConnectWithToken(UserToken, out error);
+            Session.ConnectWithToken(UserToken, out OTError error);
             return true;
         }
 
@@ -102,6 +103,7 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
                         Session.StreamCreated -= OnStreamCreated;
                         Session.StreamDestroyed -= OnStreamDestroyed;
                         Session.DidFailWithError -= OnError;
+                        Session.ReceivedSignalType -= OnSignalReceived;
                         Session.Disconnect();
                         Session.Dispose();
                         Session = null;
@@ -113,6 +115,14 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
                 IsSessionStarted = false;
                 IsPublishingStarted = false;
             }
+        }
+
+        public override bool CheckPermissions() => true;
+
+        public override Task<bool> SendMessageAsync(string message)
+        {
+            Session.SignalWithType(string.Empty, message, Session.Connection, out OTError error);
+            return Task.FromResult(error == null);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -210,7 +220,7 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
 
         private void OnError(object sender, OTSessionDelegateErrorEventArgs e)
         {
-            RaiseError(e.Error.Description);
+            RaiseError(e.Error?.Code.ToString());
             EndSession();
         }
 
@@ -243,5 +253,8 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
 
         private void OnPublisherStreamCreated(object sender, OTPublisherDelegateStreamEventArgs e)
         => IsPublishingStarted = true;
+
+        private void OnSignalReceived(object sender, OTSessionDelegateSignalEventArgs e)
+        => RaiseMessageReceived(e.StringData);
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System;
+using System.Threading.Tasks;
 
 namespace Xamarin.Forms.OpenTok.Service
 {
@@ -10,6 +11,8 @@ namespace Xamarin.Forms.OpenTok.Service
         public event PropertyChangedEventHandler PropertyChanged;
 
         public event Action<string> Error;
+
+        public event Action<string> MessageReceived;
 
         private readonly ConcurrentDictionary<string, object> _properties = new ConcurrentDictionary<string, object>();
 
@@ -73,7 +76,7 @@ namespace Xamarin.Forms.OpenTok.Service
             set => SetValue(value);
         }
 
-        public virtual bool CheckPermissions() => true;
+        public abstract bool CheckPermissions();
 
         public abstract bool TryStartSession();
 
@@ -81,7 +84,12 @@ namespace Xamarin.Forms.OpenTok.Service
 
         public abstract void CycleCamera();
 
+        public abstract Task<bool> SendMessageAsync(string message);
+
         protected void RaiseError(string message) => Error?.Invoke(message);
+
+        protected void RaiseMessageReceived(string message) 
+            => MessageReceived?.Invoke(message);
 
         private T GetValue<T>(T defaultValue, [CallerMemberName] string name = null)
             => (T)(_properties.TryGetValue(name, out object value) ? value : defaultValue);

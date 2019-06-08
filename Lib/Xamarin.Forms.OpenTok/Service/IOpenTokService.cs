@@ -1,11 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace Xamarin.Forms.OpenTok.Service
 {
     public interface IOpenTokService : INotifyPropertyChanged
     {
         event Action<string> Error;
+
+        event Action<string> MessageReceived;
 
         bool IsVideoPublishingEnabled { get; set; }
 
@@ -34,5 +37,7 @@ namespace Xamarin.Forms.OpenTok.Service
         void EndSession();
 
         void CycleCamera();
+
+        Task<bool> SendMessageAsync(string message);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Android;
 using Android.Content.PM;
 using Android.Runtime;
@@ -83,6 +84,7 @@ namespace Xamarin.Forms.OpenTok.Android.Service
             Session.StreamReceived += OnStreamCreated;
             Session.StreamDropped += OnStreamDestroyed;
             Session.Error += OnError;
+            Session.Signal += OnSignal;
             Session.Connect(UserToken);
 
             return true;
@@ -126,6 +128,7 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                         Session.StreamReceived -= OnStreamCreated;
                         Session.StreamDropped -= OnStreamDestroyed;
                         Session.Error -= OnError;
+                        Session.Signal -= OnSignal;
                         Session.Disconnect();
                         Session.Dispose();
                         Session = null;
@@ -137,6 +140,12 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 IsSessionStarted = false;
                 IsPublishingStarted = false;
             }
+        }
+
+        public override Task<bool> SendMessageAsync(string message)
+        {
+            Session.SendSignal(string.Empty, message);
+            return Task.FromResult(true);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -220,7 +229,7 @@ namespace Xamarin.Forms.OpenTok.Android.Service
 
         private void OnError(object sender, Session.ErrorEventArgs e)
         {
-            RaiseError(e.P1?.Message);
+            RaiseError(e.P1?.ErrorDomain?.Name());
             EndSession();
         }
 
@@ -250,5 +259,8 @@ namespace Xamarin.Forms.OpenTok.Android.Service
 
         private void OnPublisherStreamCreated(object sender, PublisherKit.StreamCreatedEventArgs e)
         => IsPublishingStarted = true;
+
+        private void OnSignal(object sender, Session.SignalEventArgs e)
+        => RaiseMessageReceived(e.P2);
     }
 }
