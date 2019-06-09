@@ -21,7 +21,7 @@ namespace Xamarin.Forms.OpenTok.Sample.Droid
             PlatformOpenTokService.Init();
             base.OnCreate(savedInstanceState);
 
-            CrossCurrentActivity.Current.Init(this, savedInstanceState);
+            CrossCurrentActivity.Current.Activity = this;
             Forms.Init(this, savedInstanceState);
 
             LoadApplication(new App());
