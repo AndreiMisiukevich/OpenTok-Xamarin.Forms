@@ -46,6 +46,12 @@ namespace Xamarin.Forms.OpenTok.Service
             set => SetValue(value);
         }
 
+        public bool IsSubscriberConnected
+        {
+            get => GetValue(false);
+            set => SetValue(value);
+        }
+
         public string ApiKey
         {
             get => GetValue(string.Empty);

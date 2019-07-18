@@ -79,7 +79,8 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
                     {
                         SubscriberKit.SubscribeToAudio = false;
                         SubscriberKit.SubscribeToVideo = false;
-                        SubscriberKit.DidConnectToStream -= OnSubscriberDidConnectToStream;
+                        SubscriberKit.DidConnectToStream -= OnSubscriberConnected;
+                        SubscriberKit.DidDisconnectFromStream -= OnSubscriberDisconnected;
                         SubscriberKit.VideoDataReceived -= OnSubscriberVideoDataReceived;
                         SubscriberKit.VideoEnabled -= OnSubscriberVideoEnabled;
                         SubscriberKit.VideoDisabled -= OnSubscriberVideoDisabled;
@@ -121,7 +122,7 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
 
         public override Task<bool> SendMessageAsync(string message)
         {
-            Session.SignalWithType(string.Empty, message, Session.Connection, out OTError error);
+            Session.SignalWithType(string.Empty, message, null, out OTError error);
             return Task.FromResult(error == null);
         }
 
@@ -207,7 +208,8 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
                     SubscribeToVideo = IsVideoSubscriptionEnabled
                 };
                 SubscriberKit.SubscribeToVideo = IsAudioSubscriptionEnabled;
-                SubscriberKit.DidConnectToStream += OnSubscriberDidConnectToStream;
+                SubscriberKit.DidConnectToStream += OnSubscriberConnected;
+                SubscriberKit.DidDisconnectFromStream += OnSubscriberDisconnected;
                 SubscriberKit.VideoDataReceived += OnSubscriberVideoDataReceived;
                 SubscriberKit.VideoEnabled += OnSubscriberVideoEnabled;
                 SubscriberKit.VideoDisabled += OnSubscriberVideoDisabled;
@@ -238,13 +240,18 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
             }
         }
 
-        private void OnSubscriberDidConnectToStream(object sender, EventArgs e)
+        private void OnSubscriberConnected(object sender, EventArgs e) => OnSubscriberConnectionChanged(true);
+
+        private void OnSubscriberDisconnected(object sender, EventArgs e) => OnSubscriberConnectionChanged(false);
+
+        private void OnSubscriberConnectionChanged(bool isConnected)
         {
             lock (_locker)
             {
                 if (SubscriberKit != null)
                 {
                     SubscriberUpdated?.Invoke();
+                    IsSubscriberConnected = isConnected;
                     IsSubscriberVideoEnabled = SubscriberKit?.Stream?.HasVideo ?? false;
                     PublisherUpdated?.Invoke();
                 }

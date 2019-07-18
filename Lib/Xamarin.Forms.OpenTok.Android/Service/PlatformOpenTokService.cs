@@ -105,7 +105,9 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                     {
                         SubscriberKit.SubscribeToAudio = false;
                         SubscriberKit.SubscribeToVideo = false;
-                        SubscriberKit.Connected -= OnSubscriberDidConnectToStream;
+                        SubscriberKit.Connected -= OnSubscriberConnected;
+                        SubscriberKit.StreamDisconnected -= OnSubscriberDisconnected;
+                        SubscriberKit.SubscriberDisconnected -= OnSubscriberDisconnected;
                         SubscriberKit.VideoDisabled -= OnSubscriberVideoDisabled;
                         SubscriberKit.VideoEnabled -= OnSubscriberVideoEnabled;
                         SubscriberKit.Dispose();
@@ -213,7 +215,9 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 }
 
                 SubscriberKit = new Subscriber.Builder(CrossCurrentActivity.Current.AppContext, e.P1).Build();
-                SubscriberKit.Connected += OnSubscriberDidConnectToStream;
+                SubscriberKit.Connected += OnSubscriberConnected;
+                SubscriberKit.StreamDisconnected += OnSubscriberDisconnected;
+                SubscriberKit.SubscriberDisconnected += OnSubscriberDisconnected;
                 SubscriberKit.VideoDisabled += OnSubscriberVideoDisabled;
                 SubscriberKit.VideoEnabled += OnSubscriberVideoEnabled;
 
@@ -244,13 +248,18 @@ namespace Xamarin.Forms.OpenTok.Android.Service
             }
         }
 
-        private void OnSubscriberDidConnectToStream(object sender, EventArgs e)
+        private void OnSubscriberConnected(object sender, EventArgs e) => OnSubscriberConnectionChanged(true);
+
+        private void OnSubscriberDisconnected(object sender, EventArgs e) => OnSubscriberConnectionChanged(false);
+
+        private void OnSubscriberConnectionChanged(bool isConnected)
         {
             lock (_locker)
             {
                 if (SubscriberKit != null)
                 {
                     SubscriberUpdated?.Invoke();
+                    IsSubscriberConnected = isConnected;
                     IsSubscriberVideoEnabled = SubscriberKit?.Stream?.HasVideo ?? false;
                     PublisherUpdated?.Invoke();
                 }
