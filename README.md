@@ -25,6 +25,23 @@ Add permissions to Manifest file
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 ```
+Setup CrossCurrentActivity plugin in MainActivity:
+
+```csharp
+public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
+{
+    protected override void OnCreate(Bundle savedInstanceState)
+    {
+        TabLayoutResource = Resource.Layout.Tabbar;
+        ToolbarResource = Resource.Layout.Toolbar;
+        PlatformOpenTokService.Init();
+        base.OnCreate(savedInstanceState);
+            CrossCurrentActivity.Current.Activity = this; // Add this line
+        Forms.Init(this, savedInstanceState);
+        LoadApplication(new App());
+        }
+    }
+```
 
 
 |Platform|Version|
