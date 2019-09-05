@@ -18,7 +18,7 @@ namespace Xamarin.Forms.OpenTok.Android
 
         public static void Preserve() { }
 
-        protected override AView GetNativeView() => PlatformOpenTokService.Instance.PublisherKit?.View;
+        protected override AView GetNativeView(string streamId) => PlatformOpenTokService.Instance.PublisherKit?.View;
 
         protected override void SubscribeResetControl() => PlatformOpenTokService.Instance.PublisherUpdated += ResetControl;
 

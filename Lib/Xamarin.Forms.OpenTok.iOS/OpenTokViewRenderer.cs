@@ -1,6 +1,7 @@
 ﻿using Xamarin.Forms.Platform.iOS;
 using UIKit;
 using Foundation;
+using Xamarin.Forms.OpenTok.iOS.Service;
 
 namespace Xamarin.Forms.OpenTok.iOS
 {
@@ -8,6 +9,7 @@ namespace Xamarin.Forms.OpenTok.iOS
     public abstract class OpenTokViewRenderer : ViewRenderer
     {
         private UIView _defaultView;
+        public string StreamId;
 
         protected OpenTokView OpenTokView => Element as OpenTokView;
 
@@ -15,9 +17,14 @@ namespace Xamarin.Forms.OpenTok.iOS
 
         protected override void OnElementChanged(ElementChangedEventArgs<View> e)
         {
+            if (e.NewElement is OpenTokSubscriberView subscriberView)
+            {
+                StreamId = subscriberView.StreamId;
+            }
+
             if (Control == null)
             {
-                ResetControl();
+                ResetControl(this, new OpenTokUserUpdatedEventArgs(StreamId));
             }
             if (e.OldElement != null)
             {
@@ -30,18 +37,23 @@ namespace Xamarin.Forms.OpenTok.iOS
             base.OnElementChanged(e);
         }
 
-        protected void ResetControl()
+        protected void ResetControl(object sender, OpenTokUserUpdatedEventArgs e)
         {
-            var view = GetNativeView();
+            UIView view = GetNativeView(e.StreamId);
             OpenTokView?.SetIsVideoViewRunning(view != null);
             view = view ?? DefaultView;
             if (Control != view)
             {
+                //Must not put this check in the if statement parent or it will kill publisher views for some reason.
+                if (Element is OpenTokSubscriberView && e.StreamId != StreamId)
+                {
+                    return;
+                }
                 SetNativeControl(view);
             }
         }
 
-        protected abstract UIView GetNativeView();
+        protected abstract UIView GetNativeView(string streamId);
 
         protected abstract void SubscribeResetControl();
 
@@ -53,6 +65,7 @@ namespace Xamarin.Forms.OpenTok.iOS
             if (disposing)
             {
                 UnsubscribeResetControl();
+                _defaultView?.Dispose();
             }
         }
     }

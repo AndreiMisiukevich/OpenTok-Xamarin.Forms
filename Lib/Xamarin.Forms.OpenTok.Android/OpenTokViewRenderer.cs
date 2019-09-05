@@ -2,6 +2,7 @@
 using Android.Content;
 using AView = Android.Views.View;
 using Android.Runtime;
+using Xamarin.Forms.OpenTok.Android.Service;
 
 namespace Xamarin.Forms.OpenTok.Android
 {
@@ -9,44 +10,59 @@ namespace Xamarin.Forms.OpenTok.Android
     public abstract class OpenTokViewRenderer : ViewRenderer
     {
         private AView _defaultView;
+        private string _streamId;
 
-        public OpenTokViewRenderer(Context context) : base(context)
+        protected OpenTokViewRenderer(Context context) : base(context)
         {
         }
 
-        protected OpenTokView OpenTokView => Element as OpenTokView;
+        private OpenTokView OpenTokView => Element as OpenTokView;
 
-        protected AView DefaultView => _defaultView ?? (_defaultView = new AView(Context));
+        private AView DefaultView => _defaultView ?? (_defaultView = new AView(Context));
 
         protected override void OnElementChanged(ElementChangedEventArgs<View> e)
         {
-            if (Control == null)
-            {
-                ResetControl();
-            }
+            base.OnElementChanged(e);
+
             if (e.OldElement != null)
             {
                 UnsubscribeResetControl();
             }
+
             if (e.NewElement != null)
             {
+                if (e.NewElement is OpenTokSubscriberView subscriberView)
+                {
+                    _streamId = subscriberView.StreamId;
+                }
+
+                if (Control == null)
+                {
+                    ResetControl(this, new OpenTokUserUpdatedEventArgs(_streamId));
+                }
+
                 SubscribeResetControl();
             }
-            base.OnElementChanged(e);
         }
 
-        protected void ResetControl()
+        protected void ResetControl(object sender, OpenTokUserUpdatedEventArgs e)
         {
-            var view = GetNativeView();
+            AView view = GetNativeView(e.StreamId);
             OpenTokView?.SetIsVideoViewRunning(view != null);
             view = view ?? DefaultView;
             if (Control != view)
             {
+                //Must not put this check in the if statement parent or it will kill publisher views for some reason.
+                if (Element is OpenTokSubscriberView && e.StreamId != _streamId)
+                {
+                    return;
+                }
+
                 SetNativeControl(view);
             }
         }
 
-        protected abstract AView GetNativeView();
+        protected abstract AView GetNativeView(string streamId);
 
         protected abstract void SubscribeResetControl();
 
@@ -58,6 +74,7 @@ namespace Xamarin.Forms.OpenTok.Android
             if (disposing)
             {
                 UnsubscribeResetControl();
+                _defaultView?.Dispose();
             }
         }
     }

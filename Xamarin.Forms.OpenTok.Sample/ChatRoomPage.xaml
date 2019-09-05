@@ -16,8 +16,8 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        
-        <tok:OpenTokSubscriberView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" />
+
+        <StackLayout x:Name="OpenTokSubscribers" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" />
         <tok:OpenTokPublisherView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" />
         
         <Button Text="End Call" TextColor="Red" Grid.Row="2" Grid.Column="0" Clicked="OnEndCall" />

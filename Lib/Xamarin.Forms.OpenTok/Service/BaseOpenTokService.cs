@@ -14,6 +14,8 @@ namespace Xamarin.Forms.OpenTok.Service
 
         public event Action<string> MessageReceived;
 
+        public event Action<string> SubscriberAdded;
+
         private readonly ConcurrentDictionary<string, object> _properties = new ConcurrentDictionary<string, object>();
 
         public bool IsVideoPublishingEnabled
@@ -96,6 +98,9 @@ namespace Xamarin.Forms.OpenTok.Service
 
         protected void RaiseMessageReceived(string message) 
             => MessageReceived?.Invoke(message);
+
+        protected void RaiseSubscriberAdded(string streamId)
+           => SubscriberAdded?.Invoke(streamId);
 
         private T GetValue<T>(T defaultValue, [CallerMemberName] string name = null)
             => (T)(_properties.TryGetValue(name, out object value) ? value : defaultValue);

@@ -10,6 +10,8 @@ namespace Xamarin.Forms.OpenTok.Service
 
         event Action<string> MessageReceived;
 
+        event Action<string> SubscriberAdded;
+
         bool IsVideoPublishingEnabled { get; set; }
 
         bool IsAudioPublishingEnabled { get; set; }

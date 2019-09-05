@@ -10,12 +10,14 @@ namespace Xamarin.Forms.OpenTok.Sample
         {
             InitializeComponent();
             CrossOpenTok.Current.MessageReceived += OnMessageReceived;
+            CrossOpenTok.Current.SubscriberAdded += OnSubscriberAdded;
         }
 
         private void OnEndCall(object sender, EventArgs e)
         {
             CrossOpenTok.Current.EndSession();
             CrossOpenTok.Current.MessageReceived -= OnMessageReceived;
+            CrossOpenTok.Current.SubscriberAdded -= OnSubscriberAdded;
             Navigation.PopAsync();
         }
 
@@ -32,6 +34,13 @@ namespace Xamarin.Forms.OpenTok.Sample
         private void OnMessageReceived(string message)
         {
             DisplayAlert("Random message received", message, "OK");
+        }
+
+        private void OnSubscriberAdded(string streamId)
+        {
+            var subscriber = new OpenTokSubscriberView(streamId) {HeightRequest = 200};
+            OpenTokSubscribers.Children.Add(subscriber);
+
         }
     }
 }

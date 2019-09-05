@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
 using Xamarin.Forms.OpenTok.Service;
 using AVFoundation;
 using OpenTok;
@@ -8,24 +11,35 @@ using System.Threading.Tasks;
 
 namespace Xamarin.Forms.OpenTok.iOS.Service
 {
+    public class OpenTokUserUpdatedEventArgs : EventArgs
+    {
+        public string StreamId { get; }
+
+        public OpenTokUserUpdatedEventArgs(string streamId)
+        {
+            StreamId = streamId;
+        }
+    }
+
     [Preserve(AllMembers = true)]
     public sealed class PlatformOpenTokService : BaseOpenTokService
     {
-        public event Action PublisherUpdated;
-        public event Action SubscriberUpdated;
+        public event EventHandler<OpenTokUserUpdatedEventArgs> PublisherUpdated;
+        public event EventHandler<OpenTokUserUpdatedEventArgs> SubscriberUpdated;
 
         private readonly object _locker = new object();
 
         private PlatformOpenTokService()
         {
             PropertyChanged += OnPropertyChanged;
+            Subscribers = new Dictionary<string, OTSubscriber>();
         }
 
         public static PlatformOpenTokService Instance => CrossOpenTok.Current as PlatformOpenTokService;
 
-        public OTSession Session { get; private set; }
+        private OTSession Session { get; set; }
         public OTPublisher PublisherKit { get; private set; }
-        public OTSubscriber SubscriberKit { get; private set; }
+        public Dictionary<string, OTSubscriber> Subscribers { get; private set; }
 
         public void ClearPublisherUpdated() => PublisherUpdated = null;
 
@@ -60,7 +74,7 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
             Session.ReceivedSignalType += OnSignalReceived;
             Session.Init();
 
-            Session.ConnectWithToken(UserToken, out OTError error);
+            Session.ConnectWithToken(UserToken, out OTError _);
             return true;
         }
 
@@ -75,17 +89,21 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
 
                 lock (_locker)
                 {
-                    if (SubscriberKit != null)
+                    if (Subscribers?.Count > 0)
                     {
-                        SubscriberKit.SubscribeToAudio = false;
-                        SubscriberKit.SubscribeToVideo = false;
-                        SubscriberKit.DidConnectToStream -= OnSubscriberConnected;
-                        SubscriberKit.DidDisconnectFromStream -= OnSubscriberDisconnected;
-                        SubscriberKit.VideoDataReceived -= OnSubscriberVideoDataReceived;
-                        SubscriberKit.VideoEnabled -= OnSubscriberVideoEnabled;
-                        SubscriberKit.VideoDisabled -= OnSubscriberVideoDisabled;
-                        SubscriberKit.Dispose();
-                        SubscriberKit = null;
+                        foreach (OTSubscriber subscriberKit in Subscribers.Select(subscriber => subscriber.Value))
+                        {
+                            subscriberKit.SubscribeToAudio = false;
+                            subscriberKit.SubscribeToVideo = false;
+                            subscriberKit.DidConnectToStream -= OnSubscriberConnected;
+                            subscriberKit.DidDisconnectFromStream -= OnSubscriberDisconnected;
+                            subscriberKit.VideoDataReceived -= OnSubscriberVideoDataReceived;
+                            subscriberKit.VideoEnabled -= OnSubscriberVideoEnabled;
+                            subscriberKit.VideoDisabled -= OnSubscriberVideoDisabled;
+                            subscriberKit.Dispose();
+                        }
+
+                        Subscribers = new Dictionary<string, OTSubscriber>();
                     }
 
                     if (PublisherKit != null)
@@ -123,7 +141,11 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
         public override Task<bool> SendMessageAsync(string message)
         {
             Session.SignalWithType(string.Empty, message, null, out OTError error);
-            return Task.FromResult(error == null);
+
+            bool messageSent = error == null;
+
+            error?.Dispose();
+            return Task.FromResult(messageSent);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -140,15 +162,25 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
                         return;
                 }
             }
-            if(SubscriberKit != null)
+            if (Subscribers?.Count > 0)
             {
-                switch(e.PropertyName)
+                switch (e.PropertyName)
                 {
                     case nameof(IsVideoSubscriptionEnabled):
-                        SubscriberKit.SubscribeToVideo = IsVideoSubscriptionEnabled;
+                        //TODO: This is probably wrong.
+                        foreach (OTSubscriber subscriberKit in Subscribers.Select(subscriber => subscriber.Value))
+                        {
+                            subscriberKit.SubscribeToVideo = IsVideoSubscriptionEnabled;
+                        }
+
                         return;
                     case nameof(IsAudioSubscriptionEnabled):
-                        SubscriberKit.SubscribeToAudio = IsAudioSubscriptionEnabled;
+                        //TODO: This is probably wrong.
+                        foreach (OTSubscriber subscriberKit in Subscribers.Select(subscriber => subscriber.Value))
+                        {
+                            subscriberKit.SubscribeToAudio = IsAudioSubscriptionEnabled;
+                        }
+
                         return;
                 }
             }
@@ -189,8 +221,8 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
                 };
                 PublisherKit.StreamCreated += OnPublisherStreamCreated;
 
-                Session.Publish(PublisherKit, out OTError error);
-                PublisherUpdated?.Invoke();
+                Session.Publish(PublisherKit);
+                PublisherUpdated?.Invoke(sender, new OpenTokUserUpdatedEventArgs(PublisherKit.Session.SessionId));
             }
         }
 
@@ -198,31 +230,34 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
         {
             lock (_locker)
             {
-                if (Session == null || SubscriberKit != null)
+                if (Session == null || Subscribers != null &&
+                    Subscribers.ContainsKey(e.Stream.StreamId))
                 {
                     return;
                 }
 
-                SubscriberKit = new OTSubscriber(e.Stream, null)
+                var subscriberKit = new OTSubscriber(e.Stream, null)
                 {
-                    SubscribeToVideo = IsVideoSubscriptionEnabled
+                    SubscribeToVideo = IsVideoSubscriptionEnabled,
+                    SubscribeToAudio = IsAudioSubscriptionEnabled
                 };
-                SubscriberKit.SubscribeToVideo = IsAudioSubscriptionEnabled;
-                SubscriberKit.DidConnectToStream += OnSubscriberConnected;
-                SubscriberKit.DidDisconnectFromStream += OnSubscriberDisconnected;
-                SubscriberKit.VideoDataReceived += OnSubscriberVideoDataReceived;
-                SubscriberKit.VideoEnabled += OnSubscriberVideoEnabled;
-                SubscriberKit.VideoDisabled += OnSubscriberVideoDisabled;
+                subscriberKit.DidConnectToStream += OnSubscriberConnected;
+                subscriberKit.DidDisconnectFromStream += OnSubscriberDisconnected;
+                subscriberKit.VideoDataReceived += OnSubscriberVideoDataReceived;
+                subscriberKit.VideoEnabled += OnSubscriberVideoEnabled;
+                subscriberKit.VideoDisabled += OnSubscriberVideoDisabled;
+                Session.Subscribe(subscriberKit);
 
-                Session.Subscribe(SubscriberKit, out OTError error);
+                Subscribers?.Add(e.Stream.StreamId, subscriberKit);
+                OnSubscriberAdded(e.Stream.StreamId);
             }
         }
 
-        private void OnStreamDestroyed(object sender, OTSessionDelegateStreamEventArgs e) => SubscriberUpdated?.Invoke();
+        private void OnStreamDestroyed(object sender, OTSessionDelegateStreamEventArgs e) => SubscriberUpdated?.Invoke(sender, new OpenTokUserUpdatedEventArgs(e.Stream.StreamId));
 
         private void OnError(object sender, OTSessionDelegateErrorEventArgs e)
         {
-            RaiseError(e.Error?.Code.ToString());
+            RaiseError(e.Error?.Code.ToString(CultureInfo.CurrentUICulture));
             EndSession();
         }
 
@@ -230,30 +265,34 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
         => IsSubscriberVideoEnabled = false;
 
         private void OnSubscriberVideoDataReceived(object sender, EventArgs e)
-        => SubscriberUpdated?.Invoke();
+        => SubscriberUpdated?.Invoke(sender, new OpenTokUserUpdatedEventArgs(((OTSubscriber)sender).Stream.StreamId));
 
         private void OnSubscriberVideoEnabled(object sender, OTSubscriberKitDelegateVideoEventReasonEventArgs e)
         {
             lock (_locker)
             {
-                IsSubscriberVideoEnabled = SubscriberKit?.Stream?.HasVideo ?? false;
+                var subscriberKit = (OTSubscriber) sender;
+                IsSubscriberVideoEnabled = subscriberKit?.Stream?.HasVideo ?? false;
             }
         }
 
-        private void OnSubscriberConnected(object sender, EventArgs e) => OnSubscriberConnectionChanged(true);
+        private void OnSubscriberConnected(object sender, EventArgs e) => OnSubscriberConnectionChanged(true, (OTSubscriber)sender);
 
-        private void OnSubscriberDisconnected(object sender, EventArgs e) => OnSubscriberConnectionChanged(false);
+        private void OnSubscriberDisconnected(object sender, EventArgs e) => OnSubscriberConnectionChanged(false, (OTSubscriber)sender);
 
-        private void OnSubscriberConnectionChanged(bool isConnected)
+        private void OnSubscriberConnectionChanged(bool isConnected, OTSubscriber subscriberKit)
         {
             lock (_locker)
             {
-                if (SubscriberKit != null)
+                if (subscriberKit?.Stream != null)
                 {
-                    SubscriberUpdated?.Invoke();
-                    IsSubscriberConnected = isConnected;
-                    IsSubscriberVideoEnabled = SubscriberKit?.Stream?.HasVideo ?? false;
-                    PublisherUpdated?.Invoke();
+                    if (Subscribers.ContainsKey(subscriberKit.Stream.StreamId))
+                    {
+                        SubscriberUpdated?.Invoke(this, new OpenTokUserUpdatedEventArgs(subscriberKit.Stream.StreamId));
+                        IsSubscriberConnected = isConnected;
+                        IsSubscriberVideoEnabled = subscriberKit.Stream?.HasVideo ?? false;
+                        PublisherUpdated?.Invoke(this, new OpenTokUserUpdatedEventArgs(PublisherKit.Session.SessionId));
+                    }
                 }
             }
         }
@@ -263,5 +302,8 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
 
         private void OnSignalReceived(object sender, OTSessionDelegateSignalEventArgs e)
         => RaiseMessageReceived(e.StringData);
+
+        private void OnSubscriberAdded(string streamId)
+            => RaiseSubscriberAdded(streamId);
     }
 }
