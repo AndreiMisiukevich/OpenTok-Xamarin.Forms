@@ -34,7 +34,7 @@ namespace Xamarin.Forms.OpenTok.iOS
         {
             var view = GetNativeView();
             OpenTokView?.SetIsVideoViewRunning(view != null);
-            view ??= DefaultView;
+            view = view ?? DefaultView;
             if (Control != view)
             {
                 SetNativeControl(view);
