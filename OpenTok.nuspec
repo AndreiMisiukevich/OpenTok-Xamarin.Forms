@@ -15,21 +15,21 @@
     <tags>opentok, videochat, video, chat, video streaming, tokbox, xamarin forms, audio</tags>
     <dependencies>
       <group>
-          <dependency id="Xamarin.Forms" version="3.0" />
+        <dependency id="Xamarin.Forms" version="3.0" />
       </group>
-	    <group targetFramework="Xamarin.iOS10">
-          <dependency id="Xamarin.OpenTok.iOS" version="2.15.2" />
+      <group targetFramework="Xamarin.iOS10">
+        <dependency id="Xamarin.OpenTok.iOS" version="2.15.2" />
       </group>
-	    <group targetFramework="MonoAndroid10">
-		      <dependency id="Xamarin.OpenTok.Android" version="2.15.2" />
-	    </group>			
+      <group targetFramework="MonoAndroid10">
+        <dependency id="Xamarin.OpenTok.Android" version="2.15.2" />
+        <dependency id="Plugin.CurrentActivity" version="2.1.0.4" />
+      </group>			
     </dependencies>
     <releaseNotes>
       See Changelog: https://github.com/AndreiMisiukevich/OpenTok-Xamarin.Forms/releases
     </releaseNotes>
   </metadata>
   <files>
-
     <!--Net Standard1.0-->
     <file src="Lib\Xamarin.Forms.OpenTok\bin\Release\netstandard2.0\Xamarin.Forms.OpenTok.dll" target="lib\netstandard1.0\Xamarin.Forms.OpenTok.dll" />
 
@@ -46,6 +46,5 @@
     <!--Xamarin.iOS-->
     <file src="Lib\Xamarin.Forms.OpenTok\bin\Release\netstandard2.0\Xamarin.Forms.OpenTok.dll" target="lib\Xamarin.iOS10\Xamarin.Forms.OpenTok.dll" />
     <file src="Lib\Xamarin.Forms.OpenTok.iOS\bin\Release\Xamarin.Forms.OpenTok.iOS.dll" target="lib\Xamarin.iOS10\Xamarin.Forms.OpenTok.iOS.dll" />
-
   </files>
 </package>
