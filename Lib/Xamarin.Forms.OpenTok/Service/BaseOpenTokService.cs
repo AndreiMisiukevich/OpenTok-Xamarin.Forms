@@ -3,12 +3,15 @@ using System.Collections.Concurrent;
 using System.ComponentModel;
 using System;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace Xamarin.Forms.OpenTok.Service
 {
     public abstract class BaseOpenTokService : IOpenTokService
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public abstract ReadOnlyObservableCollection<string> SubscriberStreamIds { get; }
 
         public event Action<string> Error;
 
@@ -37,18 +40,6 @@ namespace Xamarin.Forms.OpenTok.Service
         public bool IsAudioSubscriptionEnabled
         {
             get => GetValue(true);
-            set => SetValue(value);
-        }
-
-        public bool IsSubscriberVideoEnabled
-        {
-            get => GetValue(false);
-            set => SetValue(value);
-        }
-
-        public bool IsSubscriberConnected
-        {
-            get => GetValue(false);
             set => SetValue(value);
         }
 

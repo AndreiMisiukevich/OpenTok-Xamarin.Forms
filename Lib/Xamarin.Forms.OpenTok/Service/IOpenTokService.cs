@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -6,6 +7,8 @@ namespace Xamarin.Forms.OpenTok.Service
 {
     public interface IOpenTokService : INotifyPropertyChanged
     {
+        ReadOnlyObservableCollection<string> SubscriberStreamIds { get; }
+
         event Action<string> Error;
 
         event Action<string> MessageReceived;
@@ -17,8 +20,6 @@ namespace Xamarin.Forms.OpenTok.Service
         bool IsVideoSubscriptionEnabled { get; set; }
 
         bool IsAudioSubscriptionEnabled { get; set; }
-
-        bool IsSubscriberVideoEnabled { get; set; }
 
         string ApiKey { get; set; }
 

@@ -17,6 +17,6 @@ namespace Xamarin.Forms.OpenTok.iOS
 
         protected override void SubscribeResetControl() => PlatformOpenTokService.Instance.PublisherUpdated += ResetControl;
 
-        protected override void UnsubscribeResetControl() => PlatformOpenTokService.Instance.ClearPublisherUpdated();
+        protected override void UnsubscribeResetControl() => PlatformOpenTokService.Instance.PublisherUpdated -= ResetControl;
     }
 }

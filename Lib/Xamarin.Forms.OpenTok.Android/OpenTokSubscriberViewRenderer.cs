@@ -5,6 +5,7 @@ using Android.Content;
 using AView = Android.Views.View;
 using Xamarin.Forms.OpenTok.Android.Service;
 using Android.Runtime;
+using System.ComponentModel;
 
 [assembly: ExportRenderer(typeof(OpenTokSubscriberView), typeof(OpenTokSubscriberViewRenderer))]
 namespace Xamarin.Forms.OpenTok.Android
@@ -18,10 +19,30 @@ namespace Xamarin.Forms.OpenTok.Android
 
         public static void Preserve() { }
 
-        protected override AView GetNativeView() => PlatformOpenTokService.Instance.SubscriberKit?.View;
+        protected OpenTokSubscriberView OpenTokSubscriberView => OpenTokView as OpenTokSubscriberView;
+
+        protected override AView GetNativeView()
+        {
+            var streamId = OpenTokSubscriberView?.StreamId;
+            var subscribers = PlatformOpenTokService.Instance.Subscribers;
+            return (streamId != null
+                ? subscribers.FirstOrDefault(x => x.Stream?.StreamId == streamId)
+                : subscribers.FirstOrDefault())?.View;
+        }
 
         protected override void SubscribeResetControl() => PlatformOpenTokService.Instance.SubscriberUpdated += ResetControl;
 
-        protected override void UnsubscribeResetControl() => PlatformOpenTokService.Instance.ClearSubscribeUpdated();
+        protected override void UnsubscribeResetControl() => PlatformOpenTokService.Instance.SubscriberUpdated -= ResetControl;
+
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(sender, e);
+            switch (e.PropertyName)
+            {
+                case nameof(OpenTokSubscriberView.StreamId):
+                    ResetControl();
+                    break;
+            }
+        }
     }
 }

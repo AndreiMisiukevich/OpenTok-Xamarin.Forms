@@ -10,6 +10,8 @@ using Android.Support.V4.Content;
 using Com.Opentok.Android;
 using Plugin.CurrentActivity;
 using Xamarin.Forms.OpenTok.Service;
+using Android.Util;
+using System.Collections.ObjectModel;
 
 namespace Xamarin.Forms.OpenTok.Android.Service
 {
@@ -19,8 +21,6 @@ namespace Xamarin.Forms.OpenTok.Android.Service
         public event Action PublisherUpdated;
         public event Action SubscriberUpdated;
 
-        private const int RequestId = 0;
-
         private readonly string[] _requestPermissions = {
             Manifest.Permission.Camera,
             Manifest.Permission.WriteExternalStorage,
@@ -29,23 +29,23 @@ namespace Xamarin.Forms.OpenTok.Android.Service
             Manifest.Permission.Internet,
             Manifest.Permission.AccessNetworkState
         };
-
-        private readonly object _locker = new object();
+        private readonly object _sessionLocker = new object();
+        private readonly ObservableCollection<string> _subscriberStreamIds = new ObservableCollection<string>();
+        private readonly Collection<SubscriberKit> _subscribers = new Collection<SubscriberKit>();
 
         private PlatformOpenTokService()
         {
             PropertyChanged += OnPropertyChanged;
+            SubscriberStreamIds = new ReadOnlyObservableCollection<string>(_subscriberStreamIds);
+            Subscribers = new ReadOnlyCollection<SubscriberKit>(_subscribers);
         }
 
         public static PlatformOpenTokService Instance => CrossOpenTok.Current as PlatformOpenTokService;
 
+        public override ReadOnlyObservableCollection<string> SubscriberStreamIds { get; }
+        public ReadOnlyCollection<SubscriberKit> Subscribers { get; }
         public Session Session { get; private set; }
         public PublisherKit PublisherKit { get; private set; }
-        public SubscriberKit SubscriberKit { get; private set; }
-
-        public void ClearPublisherUpdated() => PublisherUpdated = null;
-
-        public void ClearSubscribeUpdated() => SubscriberUpdated = null;
 
         public static void Init()
         {
@@ -54,65 +54,54 @@ namespace Xamarin.Forms.OpenTok.Android.Service
             CrossOpenTok.Init(() => new PlatformOpenTokService());
         }
 
-        public override bool CheckPermissions()
-        {
-            var activity = CrossCurrentActivity.Current.Activity;
-            var shouldGrantPermissions = _requestPermissions.Any(permission => ContextCompat.CheckSelfPermission(activity, permission) != (int)Permission.Granted);
-            if (shouldGrantPermissions)
-            {
-                ActivityCompat.RequestPermissions(activity, _requestPermissions, RequestId);
-            }
-            return !shouldGrantPermissions;
-        }
-
         public override bool TryStartSession()
         {
-            if(!CheckPermissions() ||
-                string.IsNullOrWhiteSpace(ApiKey) ||
-                string.IsNullOrWhiteSpace(SessionId) ||
-                string.IsNullOrWhiteSpace(UserToken))
+            lock (_sessionLocker)
             {
-                return false;
+                if (!CheckPermissions() ||
+                    string.IsNullOrWhiteSpace(ApiKey) ||
+                    string.IsNullOrWhiteSpace(SessionId) ||
+                    string.IsNullOrWhiteSpace(UserToken))
+                {
+                    return false;
+                }
+
+                EndSession();
+                IsSessionStarted = true;
+
+                var builder = new Session.Builder(CrossCurrentActivity.Current.AppContext, ApiKey, SessionId);
+
+                Session = builder.Build();
+                Session.ConnectionDestroyed += OnConnectionDestroyed;
+                Session.Connected += OnConnected;
+                Session.StreamReceived += OnStreamReceived;
+                Session.StreamDropped += OnStreamDropped;
+                Session.Error += OnError;
+                Session.Signal += OnSignal;
+                Session.Connect(UserToken);
+
+                builder.Dispose();
+                return true;
             }
-
-            IsSessionStarted = true;
-            EndSession();
-
-            Session = new Session.Builder(CrossCurrentActivity.Current.AppContext, ApiKey, SessionId).Build();
-            Session.ConnectionDestroyed += OnConnectionDestroyed;
-            Session.Connected += OnDidConnect;
-            Session.StreamReceived += OnStreamCreated;
-            Session.StreamDropped += OnStreamDestroyed;
-            Session.Error += OnError;
-            Session.Signal += OnSignal;
-            Session.Connect(UserToken);
-
-            return true;
         }
 
         public override void EndSession()
         {
-            try
+            lock (_sessionLocker)
             {
-                if (Session == null)
+                try
                 {
-                    return;
-                }
-
-                lock (_locker)
-                {
-                    if (SubscriberKit != null)
+                    if (Session == null)
                     {
-                        SubscriberKit.SubscribeToAudio = false;
-                        SubscriberKit.SubscribeToVideo = false;
-                        SubscriberKit.Connected -= OnSubscriberConnected;
-                        SubscriberKit.StreamDisconnected -= OnSubscriberDisconnected;
-                        SubscriberKit.SubscriberDisconnected -= OnSubscriberDisconnected;
-                        SubscriberKit.VideoDisabled -= OnSubscriberVideoDisabled;
-                        SubscriberKit.VideoEnabled -= OnSubscriberVideoEnabled;
-                        SubscriberKit.Dispose();
-                        SubscriberKit = null;
+                        return;
                     }
+
+                    foreach (var subscriberKit in _subscribers)
+                    {
+                        ClearSubscriber(subscriberKit);
+                    }
+                    _subscribers.Clear();
+                    _subscriberStreamIds.Clear();
 
                     if (PublisherKit != null)
                     {
@@ -126,22 +115,34 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                     if (Session != null)
                     {
                         Session.ConnectionDestroyed -= OnConnectionDestroyed;
-                        Session.Connected -= OnDidConnect;
-                        Session.StreamReceived -= OnStreamCreated;
-                        Session.StreamDropped -= OnStreamDestroyed;
+                        Session.Connected -= OnConnected;
+                        Session.StreamReceived -= OnStreamReceived;
+                        Session.StreamDropped -= OnStreamDropped;
                         Session.Error -= OnError;
                         Session.Signal -= OnSignal;
                         Session.Disconnect();
                         Session.Dispose();
                         Session = null;
                     }
+
+                }
+                finally
+                {
+                    IsSessionStarted = false;
+                    IsPublishingStarted = false;
                 }
             }
-            finally
+        }
+
+        public override bool CheckPermissions()
+        {
+            var activity = CrossCurrentActivity.Current.Activity;
+            var shouldGrantPermissions = _requestPermissions.Any(permission => ContextCompat.CheckSelfPermission(activity, permission) != (int)Permission.Granted);
+            if (shouldGrantPermissions)
             {
-                IsSessionStarted = false;
-                IsPublishingStarted = false;
+                ActivityCompat.RequestPermissions(activity, _requestPermissions, 0);
             }
+            return !shouldGrantPermissions;
         }
 
         public override Task<bool> SendMessageAsync(string message)
@@ -152,124 +153,155 @@ namespace Xamarin.Forms.OpenTok.Android.Service
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (PublisherKit != null)
+            switch (e.PropertyName)
             {
-                switch (e.PropertyName)
-                {
-                    case nameof(IsVideoPublishingEnabled):
-                        PublisherKit.PublishVideo = IsVideoPublishingEnabled;
-                        return;
-                    case nameof(IsAudioPublishingEnabled):
-                        PublisherKit.PublishAudio = IsAudioPublishingEnabled;
-                        return;
-                }
+                case nameof(IsVideoPublishingEnabled):
+                    UpdatePublisherProperty(p => p.PublishVideo = IsVideoPublishingEnabled);
+                    return;
+                case nameof(IsAudioPublishingEnabled):
+                    UpdatePublisherProperty(p => p.PublishAudio = IsAudioPublishingEnabled);
+                    return;
+                case nameof(IsVideoSubscriptionEnabled):
+                    UpdateSubscriberProperty(s => s.SubscribeToVideo = IsVideoSubscriptionEnabled);
+                    return;
+                case nameof(IsAudioSubscriptionEnabled):
+                    UpdateSubscriberProperty(s => s.SubscribeToAudio = IsAudioSubscriptionEnabled);
+                    return;
             }
-            if(SubscriberKit != null)
+        }
+
+        private void UpdatePublisherProperty(Action<PublisherKit> updateAction)
+        {
+            if (PublisherKit == null)
             {
-                switch(e.PropertyName)
-                {
-                    case nameof(IsVideoSubscriptionEnabled):
-                        SubscriberKit.SubscribeToVideo = IsVideoSubscriptionEnabled;
-                        return;
-                    case nameof(IsAudioSubscriptionEnabled):
-                        SubscriberKit.SubscribeToAudio = IsAudioSubscriptionEnabled;
-                        return;
-                }
+                return;
+            }
+            updateAction?.Invoke(PublisherKit);
+        }
+
+        private void UpdateSubscriberProperty(Action<SubscriberKit> updateAction)
+        {
+            foreach (var subscriberKit in _subscribers)
+            {
+                updateAction?.Invoke(subscriberKit);
             }
         }
 
         public override void CycleCamera() => (PublisherKit as Publisher)?.CycleCamera();
 
-        private void OnConnectionDestroyed(object sender, Session.ConnectionDestroyedEventArgs e) => EndSession();
+        private void OnConnectionDestroyed(object sender, Session.ConnectionDestroyedEventArgs e)
+            => EndSession();
 
-        private void OnDidConnect(object sender, EventArgs e)
+        private void OnConnected(object sender, Session.ConnectedEventArgs e)
         {
-            lock (_locker)
+            if (Session == null || PublisherKit != null)
             {
-                if (Session == null ||
-                    PublisherKit != null)
-                {
-                    return;
-                }
-
-                PublisherKit = new Publisher.Builder(CrossCurrentActivity.Current.AppContext).Build();
-                PublisherKit.StreamCreated += OnPublisherStreamCreated;
-
-                PublisherKit.SetStyle(BaseVideoRenderer.StyleVideoScale, BaseVideoRenderer.StyleVideoFill);
-                PublisherKit.PublishAudio = IsAudioPublishingEnabled;
-                PublisherKit.PublishVideo = IsVideoPublishingEnabled;
-                PublisherUpdated?.Invoke();
-                Session.Publish(PublisherKit);
-                PublisherKit.PublishVideo = IsVideoPublishingEnabled;
+                return;
             }
+
+            PublisherKit = new Publisher.Builder(CrossCurrentActivity.Current.AppContext)
+                .Name("XamarinOpenTok")
+                .Build();
+            PublisherKit.PublishVideo = IsVideoPublishingEnabled;
+            PublisherKit.PublishAudio = IsAudioPublishingEnabled;
+            PublisherKit.SetStyle(BaseVideoRenderer.StyleVideoScale, BaseVideoRenderer.StyleVideoFill);
+            PublisherKit.StreamCreated += OnPublisherStreamCreated;
+
+            Session.Publish(PublisherKit);
+            RaisePublisherUpdated();
         }
 
-        private void OnStreamCreated(object sender, Session.StreamReceivedEventArgs e)
+        private void OnStreamReceived(object sender, Session.StreamReceivedEventArgs e)
         {
-            lock (_locker)
+            if (Session == null || _subscribers.Any(x => x.Stream?.StreamId == e.P1?.StreamId))
             {
-                if (Session == null ||
-                    SubscriberKit != null)
-                {
-                    return;
-                }
-
-                SubscriberKit = new Subscriber.Builder(CrossCurrentActivity.Current.AppContext, e.P1).Build();
-                SubscriberKit.Connected += OnSubscriberConnected;
-                SubscriberKit.StreamDisconnected += OnSubscriberDisconnected;
-                SubscriberKit.SubscriberDisconnected += OnSubscriberDisconnected;
-                SubscriberKit.VideoDisabled += OnSubscriberVideoDisabled;
-                SubscriberKit.VideoEnabled += OnSubscriberVideoEnabled;
-
-                SubscriberKit.SetStyle(BaseVideoRenderer.StyleVideoScale, BaseVideoRenderer.StyleVideoFill);
-                SubscriberKit.SubscribeToAudio = IsAudioSubscriptionEnabled;
-                SubscriberKit.SubscribeToVideo = IsVideoSubscriptionEnabled;
-                SubscriberUpdated?.Invoke();
-                Session.Subscribe(SubscriberKit);
+                return;
             }
+
+            var subscriberKit = new Subscriber.Builder(CrossCurrentActivity.Current.AppContext, e.P1).Build();
+            subscriberKit.SubscribeToAudio = IsAudioSubscriptionEnabled;
+            subscriberKit.SubscribeToVideo = IsVideoSubscriptionEnabled;
+            subscriberKit.SetStyle(BaseVideoRenderer.StyleVideoScale, BaseVideoRenderer.StyleVideoFill);
+
+            subscriberKit.Connected += OnSubscriberConnected;
+            subscriberKit.StreamDisconnected += OnStreamDisconnected;
+            subscriberKit.SubscriberDisconnected += OnSubscriberDisconnected;
+            subscriberKit.VideoDataReceived += OnSubscriberVideoDataReceived;
+            subscriberKit.VideoDisabled += OnSubscriberVideoDisabled;
+            subscriberKit.VideoEnabled += OnSubscriberVideoEnabled;
+
+            Session.Subscribe(subscriberKit);
+            var streamId = e.P1.StreamId;
+            _subscribers.Add(subscriberKit);
+            _subscriberStreamIds.Add(streamId);
         }
 
-        private void OnStreamDestroyed(object sender, Session.StreamDroppedEventArgs e) => SubscriberUpdated?.Invoke();
+        private void OnStreamDropped(object sender, Session.StreamDroppedEventArgs e)
+        {
+            var streamId = e.P1.StreamId;
+            var subscriberKit = _subscribers.FirstOrDefault(x => x.Stream?.StreamId == streamId);
+            if (subscriberKit != null)
+            {
+                ClearSubscriber(subscriberKit);
+                _subscribers.Remove(subscriberKit);
+            }
+            _subscriberStreamIds.Remove(streamId);
+        }
 
         private void OnError(object sender, Session.ErrorEventArgs e)
         {
-            RaiseError(e.P1?.ErrorDomain?.Name());
+            RaiseError(e.P1?.Message);
             EndSession();
         }
 
-        private void OnSubscriberVideoDisabled(object sender, Subscriber.VideoDisabledEventArgs e)
-        => IsSubscriberVideoEnabled = false;
+        private void OnSubscriberVideoDisabled(object sender, SubscriberKit.VideoDisabledEventArgs e)
+            => RaiseSubscriberUpdated();
 
-        private void OnSubscriberVideoEnabled(object sender, Subscriber.VideoEnabledEventArgs e)
+        private void OnSubscriberVideoDataReceived(object sender, SubscriberKit.VideoDataReceivedEventArgs e)
+            => RaiseSubscriberUpdated();
+
+        private void OnSubscriberVideoEnabled(object sender, SubscriberKit.VideoEnabledEventArgs e)
+            => RaiseSubscriberUpdated();
+
+        private void OnSubscriberConnected(object sender, SubscriberKit.ConnectedEventArgs e)
+            => RaisePublisherUpdated().RaiseSubscriberUpdated();
+
+        private void OnSubscriberDisconnected(object sender, SubscriberKit.SubscriberListenerDisconnectedEventArgs e)
+            => RaisePublisherUpdated().RaiseSubscriberUpdated();
+
+        private void OnStreamDisconnected(object sender, SubscriberKit.StreamListenerDisconnectedEventArgs e)
+            => RaisePublisherUpdated().RaiseSubscriberUpdated();
+
+        private PlatformOpenTokService RaiseSubscriberUpdated()
         {
-            lock (_locker)
-            {
-                IsSubscriberVideoEnabled = SubscriberKit?.Stream?.HasVideo ?? false;
-            }
+            SubscriberUpdated?.Invoke();
+            return this;
         }
 
-        private void OnSubscriberConnected(object sender, EventArgs e) => OnSubscriberConnectionChanged(true);
-
-        private void OnSubscriberDisconnected(object sender, EventArgs e) => OnSubscriberConnectionChanged(false);
-
-        private void OnSubscriberConnectionChanged(bool isConnected)
+        private PlatformOpenTokService RaisePublisherUpdated()
         {
-            lock (_locker)
-            {
-                if (SubscriberKit != null)
-                {
-                    SubscriberUpdated?.Invoke();
-                    IsSubscriberConnected = isConnected;
-                    IsSubscriberVideoEnabled = SubscriberKit?.Stream?.HasVideo ?? false;
-                    PublisherUpdated?.Invoke();
-                }
-            }
+            PublisherUpdated?.Invoke();
+            return this;
         }
 
         private void OnPublisherStreamCreated(object sender, PublisherKit.StreamCreatedEventArgs e)
-        => IsPublishingStarted = true;
+            => IsPublishingStarted = true;
 
         private void OnSignal(object sender, Session.SignalEventArgs e)
-        => RaiseMessageReceived(e.P2);
+            => RaiseMessageReceived(e.P2);
+
+        private void ClearSubscriber(SubscriberKit subscriberKit)
+        {
+            subscriberKit.SubscribeToAudio = false;
+            subscriberKit.SubscribeToVideo = false;
+            subscriberKit.Connected -= OnSubscriberConnected;
+            subscriberKit.StreamDisconnected -= OnStreamDisconnected;
+            subscriberKit.SubscriberDisconnected -= OnSubscriberDisconnected;
+            subscriberKit.VideoDataReceived -= OnSubscriberVideoDataReceived;
+            subscriberKit.VideoDisabled -= OnSubscriberVideoDisabled;
+            subscriberKit.VideoEnabled -= OnSubscriberVideoEnabled;
+            Session.Unsubscribe(subscriberKit);
+            subscriberKit.Dispose();
+        }
     }
 }

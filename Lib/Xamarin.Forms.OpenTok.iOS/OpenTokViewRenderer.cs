@@ -11,7 +11,7 @@ namespace Xamarin.Forms.OpenTok.iOS
 
         protected OpenTokView OpenTokView => Element as OpenTokView;
 
-        protected UIView DefaultView => _defaultView ?? (_defaultView = new UIView());
+        protected virtual UIView DefaultView => _defaultView ?? (_defaultView = new UIView());
 
         protected override void OnElementChanged(ElementChangedEventArgs<View> e)
         {
@@ -34,7 +34,7 @@ namespace Xamarin.Forms.OpenTok.iOS
         {
             var view = GetNativeView();
             OpenTokView?.SetIsVideoViewRunning(view != null);
-            view = view ?? DefaultView;
+            view ??= DefaultView;
             if (Control != view)
             {
                 SetNativeControl(view);
@@ -53,6 +53,9 @@ namespace Xamarin.Forms.OpenTok.iOS
             if (disposing)
             {
                 UnsubscribeResetControl();
+                _defaultView?.RemoveFromSuperview();
+                _defaultView?.Dispose();
+                _defaultView = null;
             }
         }
     }
