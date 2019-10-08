@@ -6,6 +6,7 @@ using AView = Android.Views.View;
 using Xamarin.Forms.OpenTok.Android.Service;
 using Android.Runtime;
 using System.ComponentModel;
+using System.Linq;
 
 [assembly: ExportRenderer(typeof(OpenTokSubscriberView), typeof(OpenTokSubscriberViewRenderer))]
 namespace Xamarin.Forms.OpenTok.Android
