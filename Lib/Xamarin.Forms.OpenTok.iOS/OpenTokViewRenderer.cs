@@ -15,16 +15,16 @@ namespace Xamarin.Forms.OpenTok.iOS
 
         protected override void OnElementChanged(ElementChangedEventArgs<View> e)
         {
-            if (Control == null)
-            {
-                ResetControl();
-            }
             if (e.OldElement != null)
             {
                 UnsubscribeResetControl();
             }
             if (e.NewElement != null)
             {
+                if (Control == null)
+                {
+                    ResetControl();
+                }
                 SubscribeResetControl();
             }
             base.OnElementChanged(e);
@@ -37,6 +37,7 @@ namespace Xamarin.Forms.OpenTok.iOS
             view = view ?? DefaultView;
             if (Control != view)
             {
+                view.RemoveFromSuperview();
                 SetNativeControl(view);
             }
         }

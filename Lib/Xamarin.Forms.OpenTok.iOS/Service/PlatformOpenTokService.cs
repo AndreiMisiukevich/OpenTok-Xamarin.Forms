@@ -300,8 +300,8 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
             subscriberKit.VideoDataReceived -= OnSubscriberVideoDataReceived;
             subscriberKit.VideoEnabled -= OnSubscriberVideoEnabled;
             subscriberKit.VideoDisabled -= OnSubscriberVideoDisabled;
-            Session.Unsubscribe(subscriberKit);
             subscriberKit.Dispose();
+            RaiseSubscriberUpdated();
         }
     }
 }

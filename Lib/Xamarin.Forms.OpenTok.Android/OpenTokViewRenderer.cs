@@ -20,16 +20,16 @@ namespace Xamarin.Forms.OpenTok.Android
 
         protected override void OnElementChanged(ElementChangedEventArgs<View> e)
         {
-            if (Control == null)
-            {
-                ResetControl();
-            }
             if (e.OldElement != null)
             {
                 UnsubscribeResetControl();
             }
             if (e.NewElement != null)
             {
+                if (Control == null)
+                {
+                    ResetControl();
+                }
                 SubscribeResetControl();
             }
             base.OnElementChanged(e);
@@ -42,6 +42,7 @@ namespace Xamarin.Forms.OpenTok.Android
             view = view ?? DefaultView;
             if (Control != view)
             {
+                view.RemoveFromParent();
                 SetNativeControl(view);
             }
         }
