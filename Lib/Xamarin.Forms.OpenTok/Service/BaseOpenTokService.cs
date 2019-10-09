@@ -7,11 +7,12 @@ using System.Collections.ObjectModel;
 
 namespace Xamarin.Forms.OpenTok.Service
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public abstract class BaseOpenTokService : IOpenTokService
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public abstract ReadOnlyObservableCollection<string> SubscriberStreamIds { get; }
+        public abstract ReadOnlyObservableCollection<string> StreamIdCollection { get; }
 
         public event Action<string> Error;
 

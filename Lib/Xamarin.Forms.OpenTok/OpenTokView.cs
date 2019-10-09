@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 namespace Xamarin.Forms.OpenTok
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public abstract class OpenTokView : View
     {
         public static BindableProperty IsVideoViewRunningProperty = BindableProperty.Create(nameof(IsVideoViewRunning), typeof(bool), typeof(OpenTokView), false, BindingMode.OneWayToSource);

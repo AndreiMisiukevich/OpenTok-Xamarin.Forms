@@ -24,13 +24,13 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
         private PlatformOpenTokService()
         {
             PropertyChanged += OnPropertyChanged;
-            SubscriberStreamIds = new ReadOnlyObservableCollection<string>(_subscriberStreamIds);
+            StreamIdCollection = new ReadOnlyObservableCollection<string>(_subscriberStreamIds);
             Subscribers = new ReadOnlyCollection<OTSubscriber>(_subscribers);
         }
 
         public static PlatformOpenTokService Instance => CrossOpenTok.Current as PlatformOpenTokService;
 
-        public override ReadOnlyObservableCollection<string> SubscriberStreamIds { get; }
+        public override ReadOnlyObservableCollection<string> StreamIdCollection { get; }
         public ReadOnlyCollection<OTSubscriber> Subscribers { get; }
         public OTSession Session { get; private set; }
         public OTPublisher PublisherKit { get; private set; }
@@ -67,7 +67,7 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
                 Session.Init();
 
                 Session.ConnectWithToken(UserToken, out OTError error);
-                using(error)
+                using (error)
                 {
                     return error == null;
                 }
@@ -135,7 +135,7 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
         public override Task<bool> SendMessageAsync(string message)
         {
             Session.SignalWithType(string.Empty, message, null, out OTError error);
-            using(error)
+            using (error)
             {
                 return Task.FromResult(error == null);
             }
@@ -162,7 +162,7 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
 
         private void UpdatePublisherProperty(Action<OTPublisher> updateAction)
         {
-            if(PublisherKit == null)
+            if (PublisherKit == null)
             {
                 return;
             }
@@ -190,7 +190,7 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
         }
 
         private void OnConnectionDestroyed(object sender, OTSessionDelegateConnectionEventArgs e)
-            => EndSession();
+            => RaiseSubscriberUpdated();
 
         private void OnDidConnect(object sender, EventArgs e)
         {

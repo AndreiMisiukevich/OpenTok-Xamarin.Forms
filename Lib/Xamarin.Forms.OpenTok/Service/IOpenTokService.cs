@@ -7,7 +7,7 @@ namespace Xamarin.Forms.OpenTok.Service
 {
     public interface IOpenTokService : INotifyPropertyChanged
     {
-        ReadOnlyObservableCollection<string> SubscriberStreamIds { get; }
+        ReadOnlyObservableCollection<string> StreamIdCollection { get; }
 
         event Action<string> Error;
 

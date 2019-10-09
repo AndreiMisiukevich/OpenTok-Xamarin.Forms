@@ -36,13 +36,13 @@ namespace Xamarin.Forms.OpenTok.Android.Service
         private PlatformOpenTokService()
         {
             PropertyChanged += OnPropertyChanged;
-            SubscriberStreamIds = new ReadOnlyObservableCollection<string>(_subscriberStreamIds);
+            StreamIdCollection = new ReadOnlyObservableCollection<string>(_subscriberStreamIds);
             Subscribers = new ReadOnlyCollection<SubscriberKit>(_subscribers);
         }
 
         public static PlatformOpenTokService Instance => CrossOpenTok.Current as PlatformOpenTokService;
 
-        public override ReadOnlyObservableCollection<string> SubscriberStreamIds { get; }
+        public override ReadOnlyObservableCollection<string> StreamIdCollection { get; }
         public ReadOnlyCollection<SubscriberKit> Subscribers { get; }
         public Session Session { get; private set; }
         public PublisherKit PublisherKit { get; private set; }
@@ -196,8 +196,8 @@ namespace Xamarin.Forms.OpenTok.Android.Service
         public override void CycleCamera() => (PublisherKit as Publisher)?.CycleCamera();
 
         private void OnConnectionDestroyed(object sender, Session.ConnectionDestroyedEventArgs e)
-            => EndSession();
-
+            => RaiseSubscriberUpdated();
+        
         private void OnConnected(object sender, Session.ConnectedEventArgs e)
         {
             if (Session == null || PublisherKit != null)

@@ -8,7 +8,7 @@
 
     <StackLayout>
         <tok:OpenTokPublisherView HeightRequest="200" />
-        <StackLayout BindableLayout.ItemsSource="{Binding Path=SubscriberStreamIds, Source={x:Static tokService:CrossOpenTok.Current}}">
+        <StackLayout BindableLayout.ItemsSource="{Binding Path=StreamIdCollection, Source={x:Static tokService:CrossOpenTok.Current}}">
             <BindableLayout.ItemTemplate>
                 <DataTemplate>
                     <tok:OpenTokSubscriberView HeightRequest="200" StreamId="{Binding .}"/>
