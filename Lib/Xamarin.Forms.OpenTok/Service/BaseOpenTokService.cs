@@ -1,5 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System;
 using System.Threading.Tasks;
@@ -17,7 +17,9 @@ namespace Xamarin.Forms.OpenTok.Service
 
         public event Action<string> MessageReceived;
 
-        private readonly ConcurrentDictionary<string, object> _properties = new ConcurrentDictionary<string, object>();
+        private readonly object _propertiesLocker = new object();
+
+        private readonly Dictionary<string, object> _properties = new Dictionary<string, object>();
 
         public bool IsVideoPublishingEnabled
         {
@@ -89,15 +91,23 @@ namespace Xamarin.Forms.OpenTok.Service
             => MessageReceived?.Invoke(message);
 
         private T GetValue<T>(T defaultValue, [CallerMemberName] string name = null)
-            => (T)(_properties.TryGetValue(name, out object value) ? value : defaultValue);
+        {
+            lock (_propertiesLocker)
+            {
+                return (T)(_properties.TryGetValue(name, out object value) ? value : defaultValue);
+            }
+        }
 
         private void SetValue<T>(T value, [CallerMemberName] string name = null) where T: IEquatable<T>
         {
-            if (_properties.ContainsKey(name) && ((T)_properties[name]).Equals(value))
+            lock (_propertiesLocker)
             {
-                return;
+                if (_properties.ContainsKey(name) && ((T)_properties[name]).Equals(value))
+                {
+                    return;
+                }
+                _properties[name] = value;
             }
-            _properties[name] = value;
             RaisePropertyChanged(name);
         }
 
