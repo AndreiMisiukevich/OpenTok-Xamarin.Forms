@@ -53,9 +53,10 @@ namespace Xamarin.Forms.OpenTok.iOS
             base.Dispose(disposing);
             if (disposing)
             {
-                UnsubscribeResetControl();
-                _defaultView?.RemoveFromSuperview();
-                _defaultView?.Dispose();
+                using (_defaultView)
+                {
+                    UnsubscribeResetControl();
+                }
                 _defaultView = null;
             }
         }

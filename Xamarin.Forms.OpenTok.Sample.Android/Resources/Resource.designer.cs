@@ -1328,6 +1328,7 @@ namespace Xamarin.Forms.OpenTok.Sample.Droid
 			global::Xamarin.Forms.OpenTok.Android.Resource.Id.main_appbar = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Id.main_appbar;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Id.main_tablayout = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Id.main_tablayout;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Id.main_toolbar = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Id.main_toolbar;
+			global::Xamarin.Forms.OpenTok.Android.Resource.Id.main_viewpager = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Id.main_viewpager;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Id.masked = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Id.masked;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Id.media_actions = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Id.media_actions;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Id.message = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Id.message;
@@ -2174,6 +2175,7 @@ namespace Xamarin.Forms.OpenTok.Sample.Droid
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Widget_MediaRouter_Light_MediaRouteButton = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Widget_MediaRouter_Light_MediaRouteButton;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Widget_MediaRouter_MediaRouteButton = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Widget_MediaRouter_MediaRouteButton;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Widget_Support_CoordinatorLayout = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Widget_Support_CoordinatorLayout;
+			global::Xamarin.Forms.OpenTok.Android.Resource.Style.collectionViewStyle = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.collectionViewStyle;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Styleable.ActionBar = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Styleable.ActionBar;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Styleable.ActionBar_background = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Styleable.ActionBar_background;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Styleable.ActionBar_backgroundSplit = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Styleable.ActionBar_backgroundSplit;
