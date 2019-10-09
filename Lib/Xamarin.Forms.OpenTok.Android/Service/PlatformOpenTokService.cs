@@ -10,7 +10,6 @@ using Android.Support.V4.Content;
 using Com.Opentok.Android;
 using Plugin.CurrentActivity;
 using Xamarin.Forms.OpenTok.Service;
-using Android.Util;
 using System.Collections.ObjectModel;
 
 namespace Xamarin.Forms.OpenTok.Android.Service
