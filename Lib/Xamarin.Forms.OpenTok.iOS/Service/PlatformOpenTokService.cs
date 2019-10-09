@@ -67,13 +67,9 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
                 Session.Init();
 
                 Session.ConnectWithToken(UserToken, out OTError error);
-                try
+                using(error)
                 {
                     return error == null;
-                }
-                finally
-                {
-                    error?.Dispose();
                 }
             }
         }
@@ -98,24 +94,31 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
 
                     if (PublisherKit != null)
                     {
-                        PublisherKit.PublishAudio = false;
-                        PublisherKit.PublishVideo = false;
-                        PublisherKit.StreamCreated -= OnPublisherStreamCreated;
-                        Session.Unpublish(PublisherKit);
-                        PublisherKit.Dispose();
+                        using (PublisherKit)
+                        {
+                            PublisherKit.PublishAudio = false;
+                            PublisherKit.PublishVideo = false;
+                            PublisherKit.StreamCreated -= OnPublisherStreamCreated;
+                            Session.Unpublish(PublisherKit);
+                        }
                         PublisherKit = null;
                     }
 
+                    RaisePublisherUpdated()
+                        .RaiseSubscriberUpdated();
+
                     if (Session != null)
                     {
-                        Session.ConnectionDestroyed -= OnConnectionDestroyed;
-                        Session.DidConnect -= OnDidConnect;
-                        Session.StreamCreated -= OnStreamCreated;
-                        Session.StreamDestroyed -= OnStreamDestroyed;
-                        Session.DidFailWithError -= OnError;
-                        Session.ReceivedSignalType -= OnSignalReceived;
-                        Session.Disconnect();
-                        Session.Dispose();
+                        using (Session)
+                        {
+                            Session.ConnectionDestroyed -= OnConnectionDestroyed;
+                            Session.DidConnect -= OnDidConnect;
+                            Session.StreamCreated -= OnStreamCreated;
+                            Session.StreamDestroyed -= OnStreamDestroyed;
+                            Session.DidFailWithError -= OnError;
+                            Session.ReceivedSignalType -= OnSignalReceived;
+                            Session.Disconnect();
+                        }
                         Session = null;
                     }
                 }
@@ -132,13 +135,9 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
         public override Task<bool> SendMessageAsync(string message)
         {
             Session.SignalWithType(string.Empty, message, null, out OTError error);
-            try
+            using(error)
             {
                 return Task.FromResult(error == null);
-            }
-            finally
-            {
-                error?.Dispose();
             }
         }
 
@@ -250,6 +249,7 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
                 _subscribers.Remove(subscriberKit);
             }
             _subscriberStreamIds.Remove(streamId);
+            RaiseSubscriberUpdated();
         }
 
         private void OnError(object sender, OTSessionDelegateErrorEventArgs e)
@@ -293,15 +293,16 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
 
         private void ClearSubscriber(OTSubscriber subscriberKit)
         {
-            subscriberKit.SubscribeToAudio = false;
-            subscriberKit.SubscribeToVideo = false;
-            subscriberKit.DidConnectToStream -= OnSubscriberConnected;
-            subscriberKit.DidDisconnectFromStream -= OnSubscriberDisconnected;
-            subscriberKit.VideoDataReceived -= OnSubscriberVideoDataReceived;
-            subscriberKit.VideoEnabled -= OnSubscriberVideoEnabled;
-            subscriberKit.VideoDisabled -= OnSubscriberVideoDisabled;
-            subscriberKit.Dispose();
-            RaiseSubscriberUpdated();
+            using (subscriberKit)
+            {
+                subscriberKit.SubscribeToAudio = false;
+                subscriberKit.SubscribeToVideo = false;
+                subscriberKit.DidConnectToStream -= OnSubscriberConnected;
+                subscriberKit.DidDisconnectFromStream -= OnSubscriberDisconnected;
+                subscriberKit.VideoDataReceived -= OnSubscriberVideoDataReceived;
+                subscriberKit.VideoEnabled -= OnSubscriberVideoEnabled;
+                subscriberKit.VideoDisabled -= OnSubscriberVideoDisabled;
+            }
         }
     }
 }

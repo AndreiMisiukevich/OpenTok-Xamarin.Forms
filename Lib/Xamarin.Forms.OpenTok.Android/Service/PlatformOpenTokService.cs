@@ -69,18 +69,17 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 EndSession();
                 IsSessionStarted = true;
 
-                var builder = new Session.Builder(CrossCurrentActivity.Current.AppContext, ApiKey, SessionId);
-
-                Session = builder.Build();
-                Session.ConnectionDestroyed += OnConnectionDestroyed;
-                Session.Connected += OnConnected;
-                Session.StreamReceived += OnStreamReceived;
-                Session.StreamDropped += OnStreamDropped;
-                Session.Error += OnError;
-                Session.Signal += OnSignal;
-                Session.Connect(UserToken);
-
-                builder.Dispose();
+                using (var builder = new Session.Builder(CrossCurrentActivity.Current.AppContext, ApiKey, SessionId))
+                {
+                    Session = builder.Build();
+                    Session.ConnectionDestroyed += OnConnectionDestroyed;
+                    Session.Connected += OnConnected;
+                    Session.StreamReceived += OnStreamReceived;
+                    Session.StreamDropped += OnStreamDropped;
+                    Session.Error += OnError;
+                    Session.Signal += OnSignal;
+                    Session.Connect(UserToken);
+                }
                 return true;
             }
         }
@@ -105,23 +104,30 @@ namespace Xamarin.Forms.OpenTok.Android.Service
 
                     if (PublisherKit != null)
                     {
-                        PublisherKit.PublishAudio = false;
-                        PublisherKit.PublishVideo = false;
-                        PublisherKit.StreamCreated -= OnPublisherStreamCreated;
-                        PublisherKit.Dispose();
+                        using (PublisherKit)
+                        {
+                            PublisherKit.PublishAudio = false;
+                            PublisherKit.PublishVideo = false;
+                            PublisherKit.StreamCreated -= OnPublisherStreamCreated;
+                        }
                         PublisherKit = null;
                     }
 
+                    RaisePublisherUpdated().
+                        RaiseSubscriberUpdated();
+
                     if (Session != null)
                     {
-                        Session.ConnectionDestroyed -= OnConnectionDestroyed;
-                        Session.Connected -= OnConnected;
-                        Session.StreamReceived -= OnStreamReceived;
-                        Session.StreamDropped -= OnStreamDropped;
-                        Session.Error -= OnError;
-                        Session.Signal -= OnSignal;
-                        Session.Disconnect();
-                        Session.Dispose();
+                        using (Session)
+                        {
+                            Session.ConnectionDestroyed -= OnConnectionDestroyed;
+                            Session.Connected -= OnConnected;
+                            Session.StreamReceived -= OnStreamReceived;
+                            Session.StreamDropped -= OnStreamDropped;
+                            Session.Error -= OnError;
+                            Session.Signal -= OnSignal;
+                            Session.Disconnect();
+                        }
                         Session = null;
                     }
 
@@ -199,16 +205,17 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 return;
             }
 
-            PublisherKit = new Publisher.Builder(CrossCurrentActivity.Current.AppContext)
-                .Name("XamarinOpenTok")
-                .Build();
-            PublisherKit.PublishVideo = IsVideoPublishingEnabled;
-            PublisherKit.PublishAudio = IsAudioPublishingEnabled;
-            PublisherKit.SetStyle(BaseVideoRenderer.StyleVideoScale, BaseVideoRenderer.StyleVideoFill);
-            PublisherKit.StreamCreated += OnPublisherStreamCreated;
+            using (var builder = new Publisher.Builder(CrossCurrentActivity.Current.AppContext).Name("XamarinOpenTok"))
+            {
+                PublisherKit = builder.Build();
+                PublisherKit.PublishVideo = IsVideoPublishingEnabled;
+                PublisherKit.PublishAudio = IsAudioPublishingEnabled;
+                PublisherKit.SetStyle(BaseVideoRenderer.StyleVideoScale, BaseVideoRenderer.StyleVideoFill);
+                PublisherKit.StreamCreated += OnPublisherStreamCreated;
 
-            Session.Publish(PublisherKit);
-            RaisePublisherUpdated();
+                Session.Publish(PublisherKit);
+                RaisePublisherUpdated();
+            }
         }
 
         private void OnStreamReceived(object sender, Session.StreamReceivedEventArgs e)
@@ -218,22 +225,25 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 return;
             }
 
-            var subscriberKit = new Subscriber.Builder(CrossCurrentActivity.Current.AppContext, e.P1).Build();
-            subscriberKit.SubscribeToAudio = IsAudioSubscriptionEnabled;
-            subscriberKit.SubscribeToVideo = IsVideoSubscriptionEnabled;
-            subscriberKit.SetStyle(BaseVideoRenderer.StyleVideoScale, BaseVideoRenderer.StyleVideoFill);
+            using (var builder = new Subscriber.Builder(CrossCurrentActivity.Current.AppContext, e.P1))
+            {
+                var subscriberKit = builder.Build();
+                subscriberKit.SubscribeToAudio = IsAudioSubscriptionEnabled;
+                subscriberKit.SubscribeToVideo = IsVideoSubscriptionEnabled;
+                subscriberKit.SetStyle(BaseVideoRenderer.StyleVideoScale, BaseVideoRenderer.StyleVideoFill);
 
-            subscriberKit.Connected += OnSubscriberConnected;
-            subscriberKit.StreamDisconnected += OnStreamDisconnected;
-            subscriberKit.SubscriberDisconnected += OnSubscriberDisconnected;
-            subscriberKit.VideoDataReceived += OnSubscriberVideoDataReceived;
-            subscriberKit.VideoDisabled += OnSubscriberVideoDisabled;
-            subscriberKit.VideoEnabled += OnSubscriberVideoEnabled;
+                subscriberKit.Connected += OnSubscriberConnected;
+                subscriberKit.StreamDisconnected += OnStreamDisconnected;
+                subscriberKit.SubscriberDisconnected += OnSubscriberDisconnected;
+                subscriberKit.VideoDataReceived += OnSubscriberVideoDataReceived;
+                subscriberKit.VideoDisabled += OnSubscriberVideoDisabled;
+                subscriberKit.VideoEnabled += OnSubscriberVideoEnabled;
 
-            Session.Subscribe(subscriberKit);
-            var streamId = e.P1.StreamId;
-            _subscribers.Add(subscriberKit);
-            _subscriberStreamIds.Add(streamId);
+                Session.Subscribe(subscriberKit);
+                var streamId = e.P1.StreamId;
+                _subscribers.Add(subscriberKit);
+                _subscriberStreamIds.Add(streamId);
+            }
         }
 
         private void OnStreamDropped(object sender, Session.StreamDroppedEventArgs e)
@@ -246,6 +256,7 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 _subscribers.Remove(subscriberKit);
             }
             _subscriberStreamIds.Remove(streamId);
+            RaiseSubscriberUpdated();
         }
 
         private void OnError(object sender, Session.ErrorEventArgs e)
@@ -292,16 +303,17 @@ namespace Xamarin.Forms.OpenTok.Android.Service
 
         private void ClearSubscriber(SubscriberKit subscriberKit)
         {
-            subscriberKit.SubscribeToAudio = false;
-            subscriberKit.SubscribeToVideo = false;
-            subscriberKit.Connected -= OnSubscriberConnected;
-            subscriberKit.StreamDisconnected -= OnStreamDisconnected;
-            subscriberKit.SubscriberDisconnected -= OnSubscriberDisconnected;
-            subscriberKit.VideoDataReceived -= OnSubscriberVideoDataReceived;
-            subscriberKit.VideoDisabled -= OnSubscriberVideoDisabled;
-            subscriberKit.VideoEnabled -= OnSubscriberVideoEnabled;
-            subscriberKit.Dispose();
-            RaiseSubscriberUpdated();
+            using (subscriberKit)
+            {
+                subscriberKit.SubscribeToAudio = false;
+                subscriberKit.SubscribeToVideo = false;
+                subscriberKit.Connected -= OnSubscriberConnected;
+                subscriberKit.StreamDisconnected -= OnStreamDisconnected;
+                subscriberKit.SubscriberDisconnected -= OnSubscriberDisconnected;
+                subscriberKit.VideoDataReceived -= OnSubscriberVideoDataReceived;
+                subscriberKit.VideoDisabled -= OnSubscriberVideoDisabled;
+                subscriberKit.VideoEnabled -= OnSubscriberVideoEnabled;
+            }
         }
     }
 }
