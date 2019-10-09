@@ -2,27 +2,33 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:tok="clr-namespace:Xamarin.Forms.OpenTok;assembly=Xamarin.Forms.OpenTok"
+             xmlns:tokService="clr-namespace:Xamarin.Forms.OpenTok.Service;assembly=Xamarin.Forms.OpenTok"
              x:Class="Xamarin.Forms.OpenTok.Sample.ChatRoomPage"
              BackgroundColor="White">
-    
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="80" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+
+    <StackLayout>
+        <tok:OpenTokPublisherView HeightRequest="200" />
+        <StackLayout BindableLayout.ItemsSource="{Binding Path=SubscriberStreamIds, Source={x:Static tokService:CrossOpenTok.Current}}">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+                    <tok:OpenTokSubscriberView HeightRequest="200" StreamId="{Binding .}"/>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </StackLayout>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="80" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
         
-        <tok:OpenTokSubscriberView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" />
-        <tok:OpenTokPublisherView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" />
+            <Button Text="End Call" TextColor="Red" Grid.Row="2" Grid.Column="0" Clicked="OnEndCall" />
+            <Button Text="Message" TextColor="Black" Grid.Row="2" Grid.Column="1" Clicked="OnMessage" />
+            <Button Text="Swap Camera" TextColor="Purple" Grid.Row="2" Grid.Column="2" Clicked="OnSwapCamera" />
         
-        <Button Text="End Call" TextColor="Red" Grid.Row="2" Grid.Column="0" Clicked="OnEndCall" />
-        <Button Text="Message" TextColor="Black" Grid.Row="2" Grid.Column="1" Clicked="OnMessage" />
-        <Button Text="Swap Camera" TextColor="Purple" Grid.Row="2" Grid.Column="2" Clicked="OnSwapCamera" />
-        
-    </Grid>
+        </Grid>
+    </StackLayout>
 </ContentPage>
