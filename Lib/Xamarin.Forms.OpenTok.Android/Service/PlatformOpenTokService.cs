@@ -68,7 +68,8 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 EndSession();
                 IsSessionStarted = true;
 
-                using (var builder = new Session.Builder(CrossCurrentActivity.Current.AppContext, ApiKey, SessionId))
+                using (var builder = new Session.Builder(CrossCurrentActivity.Current.AppContext, ApiKey, SessionId)
+                    .SessionOptions(new SessionOptions()))
                 {
                     Session = builder.Build();
                     Session.ConnectionDestroyed += OnConnectionDestroyed;
@@ -313,6 +314,11 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 subscriberKit.VideoDisabled -= OnSubscriberVideoDisabled;
                 subscriberKit.VideoEnabled -= OnSubscriberVideoEnabled;
             }
+        }
+
+        private sealed class SessionOptions : Session.SessionOptions
+        {
+            public override bool UseTextureViews() => true;
         }
     }
 }
