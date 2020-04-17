@@ -204,8 +204,10 @@ namespace Xamarin.Forms.OpenTok.Android.Service
             {
                 return;
             }
-
-            using (var builder = new Publisher.Builder(CrossCurrentActivity.Current.AppContext).Name("XamarinOpenTok"))
+            
+            using (var builder = new Publisher.Builder(CrossCurrentActivity.Current.AppContext)
+                .Resolution(Publisher.CameraCaptureResolution.High)
+                .Name("XamarinOpenTok"))
             {
                 PublisherKit = builder.Build();
                 PublisherKit.PublishVideo = IsVideoPublishingEnabled;
@@ -316,9 +318,13 @@ namespace Xamarin.Forms.OpenTok.Android.Service
             }
         }
 
-        private sealed class SessionOptions : Session.SessionOptions
+        public sealed class SessionOptions : Session.SessionOptions
         {
+            public static bool IsCameraTwoCapable { private get; set; } = true;
+
             public override bool UseTextureViews() => true;
+
+            public override bool IsCamera2Capable => IsCameraTwoCapable;
         }
     }
 }
