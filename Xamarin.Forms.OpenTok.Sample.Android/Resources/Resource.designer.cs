@@ -1856,6 +1856,7 @@ namespace Xamarin.Forms.OpenTok.Sample.Droid
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.CardView_Dark = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.CardView_Dark;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.CardView_Light = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.CardView_Light;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.collectionViewStyle = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.collectionViewStyle;
+			global::Xamarin.Forms.OpenTok.Android.Resource.Style.NestedScrollBarStyle = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.NestedScrollBarStyle;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Platform_AppCompat = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Platform_AppCompat;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Platform_AppCompat_Light = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Platform_AppCompat_Light;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Platform_MaterialComponents = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Platform_MaterialComponents;
