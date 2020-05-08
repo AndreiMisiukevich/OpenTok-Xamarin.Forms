@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Xamarin.Forms.OpenTok.Service;
 
 namespace Xamarin.Forms.OpenTok.Sample
@@ -32,6 +33,20 @@ namespace Xamarin.Forms.OpenTok.Sample
         private void OnMessageReceived(string message)
         {
             DisplayAlert("Random message received", message, "OK");
+        }
+
+        private bool _isRendererSet;
+        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            base.OnPropertyChanged(propertyName);
+            if(propertyName == "Renderer")
+            {
+                _isRendererSet = !_isRendererSet;
+                if(!_isRendererSet)
+                {
+                    OnEndCall(this, EventArgs.Empty);
+                }
+            }
         }
     }
 }
