@@ -36,7 +36,10 @@ public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompa
         ToolbarResource = Resource.Layout.Toolbar;
         PlatformOpenTokService.Init();
         base.OnCreate(savedInstanceState);
-            CrossCurrentActivity.Current.Activity = this; // Add this line
+        
+        // Add this line
+        CrossCurrentActivity.Current.Activity = this; 
+
         Forms.Init(this, savedInstanceState);
         LoadApplication(new App());
         }
