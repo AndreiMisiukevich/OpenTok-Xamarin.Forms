@@ -7,6 +7,9 @@ using Xamarin.Forms.OpenTok.Android.Service;
 using Android.Runtime;
 using System.ComponentModel;
 using System.Linq;
+using SystemIntPtr = System.IntPtr;
+using AndroidRuntimeJniHandleOwnership = Android.Runtime.JniHandleOwnership;
+using Plugin.CurrentActivity;
 
 [assembly: ExportRenderer(typeof(OpenTokSubscriberView), typeof(OpenTokSubscriberViewRenderer))]
 namespace Xamarin.Forms.OpenTok.Android
@@ -17,6 +20,12 @@ namespace Xamarin.Forms.OpenTok.Android
         public OpenTokSubscriberViewRenderer(Context context) : base(context)
         {
         }
+
+#pragma warning disable
+        public OpenTokSubscriberViewRenderer(SystemIntPtr p0, AndroidRuntimeJniHandleOwnership p1) : this(CrossCurrentActivity.Current.Activity)
+        {
+        }
+#pragma warning restore
 
         public static void Preserve() { }
 

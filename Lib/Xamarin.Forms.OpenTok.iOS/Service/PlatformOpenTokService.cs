@@ -65,7 +65,6 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
                 Session.DidFailWithError += OnError;
                 Session.ReceivedSignalType += OnSignalReceived;
                 Session.Init();
-
                 Session.ConnectWithToken(UserToken, out OTError error);
                 using (error)
                 {

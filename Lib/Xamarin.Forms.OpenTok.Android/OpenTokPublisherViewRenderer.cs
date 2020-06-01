@@ -5,6 +5,9 @@ using Android.Content;
 using AView = Android.Views.View;
 using Xamarin.Forms.OpenTok.Android.Service;
 using Android.Runtime;
+using SystemIntPtr = System.IntPtr;
+using AndroidRuntimeJniHandleOwnership = Android.Runtime.JniHandleOwnership;
+using Plugin.CurrentActivity;
 
 [assembly: ExportRenderer(typeof(OpenTokPublisherView), typeof(OpenTokPublisherViewRenderer))]
 namespace Xamarin.Forms.OpenTok.Android
@@ -15,6 +18,12 @@ namespace Xamarin.Forms.OpenTok.Android
         public OpenTokPublisherViewRenderer(Context context) : base(context)
         {
         }
+
+#pragma warning disable
+        public OpenTokPublisherViewRenderer(SystemIntPtr p0, AndroidRuntimeJniHandleOwnership p1) : this(CrossCurrentActivity.Current.Activity)
+        {
+        }
+#pragma warning restore
 
         public static void Preserve() { }
 
