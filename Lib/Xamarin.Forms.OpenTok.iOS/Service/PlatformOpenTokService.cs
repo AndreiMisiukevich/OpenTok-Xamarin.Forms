@@ -23,6 +23,7 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
 
         private PlatformOpenTokService()
         {
+            _subscriberStreamIds.CollectionChanged += OnSubscriberStreamIdsCollectionChanged;
             PropertyChanged += OnPropertyChanged;
             StreamIdCollection = new ReadOnlyObservableCollection<string>(_subscriberStreamIds);
             Subscribers = new ReadOnlyCollection<OTSubscriber>(_subscribers);

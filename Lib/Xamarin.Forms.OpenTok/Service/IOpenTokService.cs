@@ -2,16 +2,19 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Collections.Specialized;
 
 namespace Xamarin.Forms.OpenTok.Service
 {
     public interface IOpenTokService : INotifyPropertyChanged
     {
-        ReadOnlyObservableCollection<string> StreamIdCollection { get; }
-
         event Action<string> Error;
 
         event Action<string> MessageReceived;
+
+        event NotifyCollectionChangedEventHandler StreamIdCollectionChanged;
+
+        ReadOnlyObservableCollection<string> StreamIdCollection { get; }
 
         bool IsVideoPublishingEnabled { get; set; }
 

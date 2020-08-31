@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace Xamarin.Forms.OpenTok.Service
 {
@@ -12,11 +13,13 @@ namespace Xamarin.Forms.OpenTok.Service
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public abstract ReadOnlyObservableCollection<string> StreamIdCollection { get; }
-
         public event Action<string> Error;
 
         public event Action<string> MessageReceived;
+
+        public event NotifyCollectionChangedEventHandler StreamIdCollectionChanged;
+
+        public abstract ReadOnlyObservableCollection<string> StreamIdCollection { get; }
 
         private readonly object _propertiesLocker = new object();
 
@@ -90,6 +93,9 @@ namespace Xamarin.Forms.OpenTok.Service
 
         protected void RaiseMessageReceived(string message) 
             => MessageReceived?.Invoke(message);
+
+        protected void OnSubscriberStreamIdsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+            => StreamIdCollectionChanged(sender, e);
 
         private T GetValue<T>(T defaultValue, [CallerMemberName] string name = null)
         {

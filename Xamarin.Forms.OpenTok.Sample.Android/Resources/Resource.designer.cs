@@ -1663,6 +1663,7 @@ namespace Xamarin.Forms.OpenTok.Sample.Droid
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Animation_AppCompat_DropDownUp = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Animation_AppCompat_DropDownUp;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Animation_AppCompat_Tooltip = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Animation_AppCompat_Tooltip;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Animation_Design_BottomSheetDialog = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Animation_Design_BottomSheetDialog;
+			global::Xamarin.Forms.OpenTok.Android.Resource.Style.AppCompatDialogStyle = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.AppCompatDialogStyle;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Base_AlertDialog_AppCompat = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Base_AlertDialog_AppCompat;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Base_AlertDialog_AppCompat_Light = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Base_AlertDialog_AppCompat_Light;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Base_Animation_AppCompat_Dialog = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Base_Animation_AppCompat_Dialog;
@@ -1855,6 +1856,8 @@ namespace Xamarin.Forms.OpenTok.Sample.Droid
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.CardView_Dark = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.CardView_Dark;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.CardView_Light = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.CardView_Light;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.collectionViewStyle = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.collectionViewStyle;
+			global::Xamarin.Forms.OpenTok.Android.Resource.Style.MainTheme = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.MainTheme;
+			global::Xamarin.Forms.OpenTok.Android.Resource.Style.MainTheme_Base = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.MainTheme_Base;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Platform_AppCompat = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Platform_AppCompat;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Platform_AppCompat_Light = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Platform_AppCompat_Light;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Platform_MaterialComponents = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Platform_MaterialComponents;
