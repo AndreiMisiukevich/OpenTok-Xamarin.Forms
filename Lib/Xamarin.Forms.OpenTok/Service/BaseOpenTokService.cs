@@ -95,7 +95,7 @@ namespace Xamarin.Forms.OpenTok.Service
             => MessageReceived?.Invoke(message);
 
         protected void OnSubscriberStreamIdsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-            => StreamIdCollectionChanged(sender, e);
+            => StreamIdCollectionChanged?.Invoke(sender, e);
 
         private T GetValue<T>(T defaultValue, [CallerMemberName] string name = null)
         {
