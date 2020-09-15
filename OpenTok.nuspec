@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Xamarin.Forms.OpenTok</id>
-    <version>1.2.6</version>
+    <version>1.2.8</version>
     <title>Xamarin.Forms.OpenTok</title>
     <authors>Andrei Misiukevich</authors>
     <owners>Andrei Misiukevich</owners>
@@ -18,10 +18,10 @@
         <dependency id="Xamarin.Forms" version="3.0" />
       </group>
       <group targetFramework="Xamarin.iOS10">
-        <dependency id="Xamarin.OpenTok.iOS" version="2.16.6" />
+        <dependency id="Xamarin.OpenTok.iOS" version="2.17.1" />
       </group>
       <group targetFramework="MonoAndroid10">
-        <dependency id="Xamarin.OpenTok.Android" version="2.16.6" />
+        <dependency id="Xamarin.OpenTok.Android" version="2.17.2" />
         <dependency id="Plugin.CurrentActivity" version="2.1.0.4" />
       </group>
       <group targetFramework="netstandard10" />
