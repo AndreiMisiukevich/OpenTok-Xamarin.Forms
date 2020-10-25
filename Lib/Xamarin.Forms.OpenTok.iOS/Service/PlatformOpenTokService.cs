@@ -217,10 +217,12 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
 
         private void OnStreamCreated(object sender, OTSessionDelegateStreamEventArgs e)
         {
-            if (Session == null || _subscribers.Any(x => x.Stream?.StreamId == e.Stream?.StreamId))
+            if (Session == null)
             {
                 return;
             }
+
+            DestroyStream(e.Stream?.StreamId);
 
             var subscriberKit = new OTSubscriber(e.Stream, null)
             {
@@ -240,17 +242,7 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
         }
 
         private void OnStreamDestroyed(object sender, OTSessionDelegateStreamEventArgs e)
-        {
-            var streamId = e.Stream.StreamId;
-            var subscriberKit = _subscribers.FirstOrDefault(x => x.Stream?.StreamId == streamId);
-            if (subscriberKit != null)
-            {
-                ClearSubscriber(subscriberKit);
-                _subscribers.Remove(subscriberKit);
-            }
-            _subscriberStreamIds.Remove(streamId);
-            RaiseSubscriberUpdated();
-        }
+            => DestroyStream(e.Stream?.StreamId);
 
         private void OnError(object sender, OTSessionDelegateErrorEventArgs e)
         {
@@ -272,6 +264,18 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
 
         private void OnSubscriberDisconnected(object sender, EventArgs e)
             => RaisePublisherUpdated().RaiseSubscriberUpdated();
+
+        private void DestroyStream(string streamId)
+        {
+            var subscriberKit = _subscribers.FirstOrDefault(x => x.Stream?.StreamId == streamId);
+            if (subscriberKit != null)
+            {
+                ClearSubscriber(subscriberKit);
+                _subscribers.Remove(subscriberKit);
+            }
+            _subscriberStreamIds.Remove(streamId);
+            RaiseSubscriberUpdated();
+        }
 
         private PlatformOpenTokService RaiseSubscriberUpdated()
         {

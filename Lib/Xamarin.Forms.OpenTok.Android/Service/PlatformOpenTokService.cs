@@ -223,10 +223,12 @@ namespace Xamarin.Forms.OpenTok.Android.Service
 
         private void OnStreamReceived(object sender, Session.StreamReceivedEventArgs e)
         {
-            if (Session == null || _subscribers.Any(x => x.Stream?.StreamId == e.P1?.StreamId))
+            if (Session == null)
             {
                 return;
             }
+
+            DropStream(e.P1?.StreamId);
 
             using (var builder = new Subscriber.Builder(CrossCurrentActivity.Current.AppContext, e.P1))
             {
@@ -250,17 +252,7 @@ namespace Xamarin.Forms.OpenTok.Android.Service
         }
 
         private void OnStreamDropped(object sender, Session.StreamDroppedEventArgs e)
-        {
-            var streamId = e.P1.StreamId;
-            var subscriberKit = _subscribers.FirstOrDefault(x => x.Stream?.StreamId == streamId);
-            if (subscriberKit != null)
-            {
-                ClearSubscriber(subscriberKit);
-                _subscribers.Remove(subscriberKit);
-            }
-            _subscriberStreamIds.Remove(streamId);
-            RaiseSubscriberUpdated();
-        }
+            => DropStream(e.P1?.StreamId);
 
         private void OnError(object sender, Session.ErrorEventArgs e)
         {
@@ -285,6 +277,18 @@ namespace Xamarin.Forms.OpenTok.Android.Service
 
         private void OnStreamDisconnected(object sender, SubscriberKit.StreamListenerDisconnectedEventArgs e)
             => RaisePublisherUpdated().RaiseSubscriberUpdated();
+
+        private void DropStream(string streamId)
+        {
+            var subscriberKit = _subscribers.FirstOrDefault(x => x.Stream?.StreamId == streamId);
+            if (subscriberKit != null)
+            {
+                ClearSubscriber(subscriberKit);
+                _subscribers.Remove(subscriberKit);
+            }
+            _subscriberStreamIds.Remove(streamId);
+            RaiseSubscriberUpdated();
+        }
 
         private PlatformOpenTokService RaiseSubscriberUpdated()
         {
