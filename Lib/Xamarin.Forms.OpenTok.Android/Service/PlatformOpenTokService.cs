@@ -11,6 +11,7 @@ using Com.Opentok.Android;
 using Plugin.CurrentActivity;
 using Xamarin.Forms.OpenTok.Service;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace Xamarin.Forms.OpenTok.Android.Service
 {
@@ -20,14 +21,6 @@ namespace Xamarin.Forms.OpenTok.Android.Service
         public event Action PublisherUpdated;
         public event Action SubscriberUpdated;
 
-        private readonly string[] _requestPermissions = {
-            Manifest.Permission.Camera,
-            Manifest.Permission.WriteExternalStorage,
-            Manifest.Permission.RecordAudio,
-            Manifest.Permission.ModifyAudioSettings,
-            Manifest.Permission.Internet,
-            Manifest.Permission.AccessNetworkState
-        };
         private readonly object _sessionLocker = new object();
         private readonly ObservableCollection<string> _subscriberStreamIds = new ObservableCollection<string>();
         private readonly Collection<SubscriberKit> _subscribers = new Collection<SubscriberKit>();
@@ -143,11 +136,12 @@ namespace Xamarin.Forms.OpenTok.Android.Service
 
         public override bool CheckPermissions()
         {
+            var permissions = GetPermissions().ToArray();
             var activity = CrossCurrentActivity.Current.Activity;
-            var shouldGrantPermissions = _requestPermissions.Any(permission => ContextCompat.CheckSelfPermission(activity, permission) != (int)Permission.Granted);
+            var shouldGrantPermissions = permissions.Any(permission => ContextCompat.CheckSelfPermission(activity, permission) != (int)Permission.Granted);
             if (shouldGrantPermissions)
             {
-                ActivityCompat.RequestPermissions(activity, _requestPermissions, 0);
+                ActivityCompat.RequestPermissions(activity, permissions, 0);
             }
             return !shouldGrantPermissions;
         }
@@ -157,6 +151,8 @@ namespace Xamarin.Forms.OpenTok.Android.Service
             Session.SendSignal(string.Empty, message);
             return Task.FromResult(true);
         }
+
+        public override void CycleCamera() => (PublisherKit as Publisher)?.CycleCamera();
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -194,7 +190,37 @@ namespace Xamarin.Forms.OpenTok.Android.Service
             }
         }
 
-        public override void CycleCamera() => (PublisherKit as Publisher)?.CycleCamera();
+        private IEnumerable<string> GetPermissions()
+        {
+            if (Permissions.HasFlag(OpenTokPermission.Camera))
+            {
+                yield return Manifest.Permission.Camera;
+            }
+
+            if (Permissions.HasFlag(OpenTokPermission.WriteExternalStorage))
+            {
+                yield return Manifest.Permission.WriteExternalStorage;
+            }
+
+            if (Permissions.HasFlag(OpenTokPermission.RecordAudio))
+            {
+                yield return Manifest.Permission.RecordAudio;
+            }
+
+            if (Permissions.HasFlag(OpenTokPermission.ModifyAudioSettings))
+            {
+                yield return Manifest.Permission.ModifyAudioSettings;
+            }
+
+            if (Permissions.HasFlag(OpenTokPermission.ModifyAudioSettings))
+            {
+                yield return Manifest.Permission.ModifyAudioSettings;
+            }
+
+            yield return Manifest.Permission.Internet;
+
+            yield return Manifest.Permission.AccessNetworkState;
+        }
 
         private void OnConnectionDestroyed(object sender, Session.ConnectionDestroyedEventArgs e)
             => RaiseSubscriberUpdated();

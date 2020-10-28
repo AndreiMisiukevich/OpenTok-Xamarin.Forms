@@ -25,6 +25,12 @@ namespace Xamarin.Forms.OpenTok.Service
 
         private readonly Dictionary<string, object> _properties = new Dictionary<string, object>();
 
+        public OpenTokPermission Permissions
+        {
+            get => GetValue(OpenTokPermission.All);
+            set => SetValue(value);
+        }
+
         public bool IsVideoPublishingEnabled
         {
             get => GetValue(true);
@@ -105,11 +111,11 @@ namespace Xamarin.Forms.OpenTok.Service
             }
         }
 
-        private void SetValue<T>(T value, [CallerMemberName] string name = null) where T: IEquatable<T>
+        private void SetValue<T>(T value, [CallerMemberName] string name = null)
         {
             lock (_propertiesLocker)
             {
-                if (_properties.ContainsKey(name) && ((T)_properties[name]).Equals(value))
+                if (_properties.ContainsKey(name) && EqualityComparer<T>.Default.Equals((T)_properties[name], value))
                 {
                     return;
                 }

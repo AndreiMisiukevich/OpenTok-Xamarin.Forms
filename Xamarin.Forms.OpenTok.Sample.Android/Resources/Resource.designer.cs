@@ -186,7 +186,6 @@ namespace Xamarin.Forms.OpenTok.Sample.Droid
 			global::Xamarin.Forms.OpenTok.Android.Resource.Attribute.collapsedTitleGravity = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Attribute.collapsedTitleGravity;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Attribute.collapsedTitleTextAppearance = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Attribute.collapsedTitleTextAppearance;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Attribute.collapseIcon = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Attribute.collapseIcon;
-			global::Xamarin.Forms.OpenTok.Android.Resource.Attribute.collectionViewStyle = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Attribute.collectionViewStyle;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Attribute.color = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Attribute.color;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Attribute.colorAccent = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Attribute.colorAccent;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Attribute.colorBackgroundFloating = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Attribute.colorBackgroundFloating;
@@ -1651,7 +1650,6 @@ namespace Xamarin.Forms.OpenTok.Sample.Droid
 			global::Xamarin.Forms.OpenTok.Android.Resource.String.mr_system_route_name = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.String.mr_system_route_name;
 			global::Xamarin.Forms.OpenTok.Android.Resource.String.mr_user_route_category_name = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.String.mr_user_route_category_name;
 			global::Xamarin.Forms.OpenTok.Android.Resource.String.mtrl_chip_close_icon_content_description = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.String.mtrl_chip_close_icon_content_description;
-			global::Xamarin.Forms.OpenTok.Android.Resource.String.overflow_tab_title = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.String.overflow_tab_title;
 			global::Xamarin.Forms.OpenTok.Android.Resource.String.password_toggle_content_description = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.String.password_toggle_content_description;
 			global::Xamarin.Forms.OpenTok.Android.Resource.String.path_password_eye = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.String.path_password_eye;
 			global::Xamarin.Forms.OpenTok.Android.Resource.String.path_password_eye_mask_strike_through = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.String.path_password_eye_mask_strike_through;
@@ -1857,7 +1855,6 @@ namespace Xamarin.Forms.OpenTok.Sample.Droid
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.CardView = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.CardView;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.CardView_Dark = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.CardView_Dark;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.CardView_Light = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.CardView_Light;
-			global::Xamarin.Forms.OpenTok.Android.Resource.Style.collectionViewTheme = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.collectionViewTheme;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.MainTheme = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.MainTheme;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.MainTheme_Base = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.MainTheme_Base;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Style.Platform_AppCompat = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Style.Platform_AppCompat;
@@ -2599,8 +2596,6 @@ namespace Xamarin.Forms.OpenTok.Sample.Droid
 			global::Xamarin.Forms.OpenTok.Android.Resource.Styleable.GradientColor_android_startY = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Styleable.GradientColor_android_startY;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Styleable.GradientColor_android_tileMode = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Styleable.GradientColor_android_tileMode;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Styleable.GradientColor_android_type = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Styleable.GradientColor_android_type;
-			global::Xamarin.Forms.OpenTok.Android.Resource.Styleable.ItemsViewRendererTheme = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Styleable.ItemsViewRendererTheme;
-			global::Xamarin.Forms.OpenTok.Android.Resource.Styleable.ItemsViewRendererTheme_collectionViewStyle = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Styleable.ItemsViewRendererTheme_collectionViewStyle;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Styleable.LinearLayoutCompat = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Styleable.LinearLayoutCompat;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Styleable.LinearLayoutCompat_android_baselineAligned = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Styleable.LinearLayoutCompat_android_baselineAligned;
 			global::Xamarin.Forms.OpenTok.Android.Resource.Styleable.LinearLayoutCompat_android_baselineAlignedChildIndex = global::Xamarin.Forms.OpenTok.Sample.Droid.Resource.Styleable.LinearLayoutCompat_android_baselineAlignedChildIndex;

@@ -16,6 +16,8 @@ namespace Xamarin.Forms.OpenTok.Service
 
         ReadOnlyObservableCollection<string> StreamIdCollection { get; }
 
+        OpenTokPermission Permissions { get; set; }
+
         bool IsVideoPublishingEnabled { get; set; }
 
         bool IsAudioPublishingEnabled { get; set; }
