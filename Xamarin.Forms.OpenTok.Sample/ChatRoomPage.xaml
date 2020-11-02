@@ -23,12 +23,13 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
         
-            <Button Text="End Call" TextColor="Red" Grid.Row="2" Grid.Column="0" Clicked="OnEndCall" />
-            <Button Text="Message" TextColor="Black" Grid.Row="2" Grid.Column="1" Clicked="OnMessage" />
-            <Button Text="Swap Camera" TextColor="Purple" Grid.Row="2" Grid.Column="2" Clicked="OnSwapCamera" />
-        
+            <Button Text="End Call" TextColor="Red" Grid.Row="0" Grid.Column="0" Clicked="OnEndCall" />
+            <Button Text="Message" TextColor="Black" Grid.Row="0" Grid.Column="1" Clicked="OnMessage" />
+            <Button Text="Swap Camera" TextColor="Purple" Grid.Row="0" Grid.Column="2" Clicked="OnSwapCamera" />
+            <Button Text="Share" TextColor="Gold" Grid.Row="0" Grid.Column="3" Clicked="OnShareScreen" />
         </Grid>
     </StackLayout>
 </ContentPage>

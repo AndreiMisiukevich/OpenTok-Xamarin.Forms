@@ -30,6 +30,13 @@ namespace Xamarin.Forms.OpenTok.Sample
             CrossOpenTok.Current.CycleCamera();
         }
 
+        void OnShareScreen(object sender, EventArgs e)
+        {
+            CrossOpenTok.Current.PublisherVideoType = CrossOpenTok.Current.PublisherVideoType == OpenTokPublisherVideoType.Camera
+                ? OpenTokPublisherVideoType.Screen
+                : OpenTokPublisherVideoType.Camera;
+        }
+
         private void OnMessageReceived(string message)
         {
             DisplayAlert("Random message received", message, "OK");

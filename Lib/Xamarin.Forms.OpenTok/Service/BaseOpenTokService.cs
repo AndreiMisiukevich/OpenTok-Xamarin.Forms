@@ -31,6 +31,12 @@ namespace Xamarin.Forms.OpenTok.Service
             set => SetValue(value);
         }
 
+        public OpenTokPublisherVideoType PublisherVideoType
+        {
+            get => GetValue(OpenTokPublisherVideoType.Camera);
+            set => SetValue(value);
+        }
+
         public bool IsVideoPublishingEnabled
         {
             get => GetValue(true);

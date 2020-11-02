@@ -96,16 +96,7 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                     _subscribers.Clear();
                     _subscriberStreamIds.Clear();
 
-                    if (PublisherKit != null)
-                    {
-                        using (PublisherKit)
-                        {
-                            PublisherKit.PublishAudio = false;
-                            PublisherKit.PublishVideo = false;
-                            PublisherKit.StreamCreated -= OnPublisherStreamCreated;
-                        }
-                        PublisherKit = null;
-                    }
+                    ClearPublisher();
 
                     RaisePublisherUpdated().
                         RaiseSubscriberUpdated();
@@ -163,6 +154,9 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                     return;
                 case nameof(IsAudioPublishingEnabled):
                     UpdatePublisherProperty(p => p.PublishAudio = IsAudioPublishingEnabled);
+                    return;
+                case nameof(PublisherVideoType):
+                    OnConnected(this, new Session.ConnectedEventArgs(Session));
                     return;
                 case nameof(IsVideoSubscriptionEnabled):
                     UpdateSubscriberProperty(s => s.SubscribeToVideo = IsVideoSubscriptionEnabled);
@@ -227,11 +221,13 @@ namespace Xamarin.Forms.OpenTok.Android.Service
         
         private void OnConnected(object sender, Session.ConnectedEventArgs e)
         {
-            if (Session == null || PublisherKit != null)
+            if (Session == null)
             {
                 return;
             }
-            
+
+            ClearPublisher();
+
             using (var builder = new Publisher.Builder(CrossCurrentActivity.Current.AppContext)
                 .Resolution(Publisher.CameraCaptureResolution.High)
                 .VideoTrack(Permissions.HasFlag(OpenTokPermission.Camera))
@@ -243,7 +239,10 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 PublisherKit.PublishAudio = IsAudioPublishingEnabled;
                 PublisherKit.SetStyle(BaseVideoRenderer.StyleVideoScale, BaseVideoRenderer.StyleVideoFill);
                 PublisherKit.StreamCreated += OnPublisherStreamCreated;
-
+                PublisherKit.AudioFallbackEnabled = PublisherVideoType == OpenTokPublisherVideoType.Camera;
+                PublisherKit.PublisherVideoType = PublisherVideoType == OpenTokPublisherVideoType.Camera
+                    ? PublisherKit.PublisherKitVideoType.PublisherKitVideoTypeCamera
+                    : PublisherKit.PublisherKitVideoType.PublisherKitVideoTypeScreen;
                 Session.Publish(PublisherKit);
                 RaisePublisherUpdated();
             }
@@ -348,7 +347,25 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 subscriberKit.VideoDataReceived -= OnSubscriberVideoDataReceived;
                 subscriberKit.VideoDisabled -= OnSubscriberVideoDisabled;
                 subscriberKit.VideoEnabled -= OnSubscriberVideoEnabled;
+                Session.Unsubscribe(subscriberKit);
             }
+        }
+
+        private void ClearPublisher()
+        {
+            if (PublisherKit == null)
+            {
+                return;
+            }
+
+            using (PublisherKit)
+            {
+                PublisherKit.PublishAudio = false;
+                PublisherKit.PublishVideo = false;
+                PublisherKit.StreamCreated -= OnPublisherStreamCreated;
+                Session.Unpublish(PublisherKit);
+            }
+            PublisherKit = null;
         }
 
         public sealed class SessionOptions : Session.SessionOptions
