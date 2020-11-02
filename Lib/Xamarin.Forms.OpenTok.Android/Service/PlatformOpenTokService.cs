@@ -234,6 +234,8 @@ namespace Xamarin.Forms.OpenTok.Android.Service
             
             using (var builder = new Publisher.Builder(CrossCurrentActivity.Current.AppContext)
                 .Resolution(Publisher.CameraCaptureResolution.High)
+                .VideoTrack(Permissions.HasFlag(OpenTokPermission.Camera))
+                .AudioTrack(Permissions.HasFlag(OpenTokPermission.RecordAudio))
                 .Name("XamarinOpenTok"))
             {
                 PublisherKit = builder.Build();

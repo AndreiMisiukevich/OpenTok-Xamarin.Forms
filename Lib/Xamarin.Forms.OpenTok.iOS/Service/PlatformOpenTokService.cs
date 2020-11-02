@@ -203,7 +203,9 @@ namespace Xamarin.Forms.OpenTok.iOS.Service
             {
                 Name = "XamarinOpenTok",
                 CameraFrameRate = OTCameraCaptureFrameRate.OTCameraCaptureFrameRate15FPS,
-                CameraResolution = OTCameraCaptureResolution.High
+                CameraResolution = OTCameraCaptureResolution.High,
+                VideoTrack = Permissions.HasFlag(OpenTokPermission.Camera),
+                AudioTrack = Permissions.HasFlag(OpenTokPermission.RecordAudio)
             })
             {
                 PublishVideo = IsVideoPublishingEnabled,
