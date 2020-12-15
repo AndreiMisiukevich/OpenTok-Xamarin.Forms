@@ -206,11 +206,6 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 yield return Manifest.Permission.ModifyAudioSettings;
             }
 
-            if (Permissions.HasFlag(OpenTokPermission.ModifyAudioSettings))
-            {
-                yield return Manifest.Permission.ModifyAudioSettings;
-            }
-
             yield return Manifest.Permission.Internet;
 
             yield return Manifest.Permission.AccessNetworkState;
@@ -218,7 +213,7 @@ namespace Xamarin.Forms.OpenTok.Android.Service
 
         private void OnConnectionDestroyed(object sender, Session.ConnectionDestroyedEventArgs e)
             => RaiseSubscriberUpdated();
-        
+
         private void OnConnected(object sender, Session.ConnectedEventArgs e)
         {
             if (Session == null)
