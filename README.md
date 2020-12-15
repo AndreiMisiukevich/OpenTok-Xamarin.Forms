@@ -37,13 +37,14 @@ public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompa
         PlatformOpenTokService.Init();
         base.OnCreate(savedInstanceState);
         
-        // Add this line
-        CrossCurrentActivity.Current.Activity = this; 
+        // ==== Add this line ==== //
+        CrossCurrentActivity.Current.Activity = this;
+	// ==== ............. ==== //
 
         Forms.Init(this, savedInstanceState);
         LoadApplication(new App());
-        }
     }
+}
 ```
 
 
