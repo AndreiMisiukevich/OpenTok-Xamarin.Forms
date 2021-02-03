@@ -176,7 +176,7 @@
       <HintPath>..\..\packages\Xamarin.Android.Support.v7.MediaRouter.28.0.0.3\lib\monoandroid90\Xamarin.Android.Support.v7.MediaRouter.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.OpenTok.Android">
-      <HintPath>..\..\packages\Xamarin.OpenTok.Android.2.18.0\lib\MonoAndroid\Xamarin.OpenTok.Android.dll</HintPath>
+      <HintPath>..\..\packages\Xamarin.OpenTok.Android.2.18.1\lib\MonoAndroid\Xamarin.OpenTok.Android.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Android.Support.CustomTabs">
       <HintPath>..\..\packages\Xamarin.Android.Support.CustomTabs.28.0.0.3\lib\monoandroid90\Xamarin.Android.Support.CustomTabs.dll</HintPath>
