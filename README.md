@@ -112,7 +112,7 @@ Use **OpenTokPublisherView** and **OpenTokSubscriberView** for showing video fro
     </Grid>
 </ContentPage>
 ```
-Check source code for more info, or 🇧🇾 just ask me =) 🇧🇾
+Check source code for more info, 🇧🇾 just ask me =)
 
 ## License
 The MIT License (MIT) see [License file](LICENSE)
