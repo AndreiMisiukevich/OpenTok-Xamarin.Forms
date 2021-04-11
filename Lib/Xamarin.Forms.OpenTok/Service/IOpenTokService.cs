@@ -20,6 +20,10 @@ namespace Xamarin.Forms.OpenTok.Service
 
         OpenTokPublisherVideoType PublisherVideoType { get; set; }
 
+        OpenTokVideoScaleStyle PublisherVideoScaleStyle { get; set; }
+
+        OpenTokVideoScaleStyle SubscriberVideoScaleStyle { get; set; }
+
         bool IsVideoPublishingEnabled { get; set; }
 
         bool IsAudioPublishingEnabled { get; set; }

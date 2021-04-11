@@ -37,6 +37,18 @@ namespace Xamarin.Forms.OpenTok.Service
             set => SetValue(value);
         }
 
+        public OpenTokVideoScaleStyle PublisherVideoScaleStyle
+        {
+            get => GetValue(OpenTokVideoScaleStyle.Fill);
+            set => SetValue(value);
+        }
+
+        public OpenTokVideoScaleStyle SubscriberVideoScaleStyle
+        {
+            get => GetValue(OpenTokVideoScaleStyle.Fill);
+            set => SetValue(value);
+        }
+
         public bool IsVideoPublishingEnabled
         {
             get => GetValue(true);

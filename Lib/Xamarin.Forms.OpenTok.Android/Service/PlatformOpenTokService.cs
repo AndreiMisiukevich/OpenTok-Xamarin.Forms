@@ -155,6 +155,9 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 case nameof(IsAudioPublishingEnabled):
                     UpdatePublisherProperty(p => p.PublishAudio = IsAudioPublishingEnabled);
                     return;
+                case nameof(PublisherVideoScaleStyle):
+                    UpdatePublisherProperty(SetVideoScaleStyle);
+                    return;
                 case nameof(PublisherVideoType):
                     OnConnected(this, new Session.ConnectedEventArgs(Session));
                     return;
@@ -163,6 +166,9 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                     return;
                 case nameof(IsAudioSubscriptionEnabled):
                     UpdateSubscriberProperty(s => s.SubscribeToAudio = IsAudioSubscriptionEnabled);
+                    return;
+                case nameof(SubscriberVideoScaleStyle):
+                    UpdateSubscriberProperty(SetVideoScaleStyle);
                     return;
             }
         }
@@ -232,7 +238,8 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 PublisherKit = builder.Build();
                 PublisherKit.PublishVideo = IsVideoPublishingEnabled;
                 PublisherKit.PublishAudio = IsAudioPublishingEnabled;
-                PublisherKit.SetStyle(BaseVideoRenderer.StyleVideoScale, BaseVideoRenderer.StyleVideoFill);
+                SetVideoScaleStyle(PublisherKit);
+
                 PublisherKit.StreamCreated += OnPublisherStreamCreated;
                 PublisherKit.AudioFallbackEnabled = PublisherVideoType == OpenTokPublisherVideoType.Camera;
                 PublisherKit.PublisherVideoType = PublisherVideoType == OpenTokPublisherVideoType.Camera
@@ -257,7 +264,7 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 var subscriberKit = builder.Build();
                 subscriberKit.SubscribeToAudio = IsAudioSubscriptionEnabled;
                 subscriberKit.SubscribeToVideo = IsVideoSubscriptionEnabled;
-                subscriberKit.SetStyle(BaseVideoRenderer.StyleVideoScale, BaseVideoRenderer.StyleVideoFill);
+                SetVideoScaleStyle(subscriberKit);
 
                 subscriberKit.Connected += OnSubscriberConnected;
                 subscriberKit.StreamDisconnected += OnStreamDisconnected;
@@ -362,6 +369,17 @@ namespace Xamarin.Forms.OpenTok.Android.Service
             }
             PublisherKit = null;
         }
+
+        private void SetVideoScaleStyle(PublisherKit publisherKit)
+            => publisherKit.SetStyle(BaseVideoRenderer.StyleVideoScale, MapVideoScaleStyle(PublisherVideoScaleStyle));
+
+        private void SetVideoScaleStyle(SubscriberKit subscriberKit)
+            => subscriberKit.SetStyle(BaseVideoRenderer.StyleVideoScale, MapVideoScaleStyle(SubscriberVideoScaleStyle));
+
+        private string MapVideoScaleStyle(OpenTokVideoScaleStyle scaleStyle)
+            => scaleStyle == OpenTokVideoScaleStyle.Fill
+                    ? BaseVideoRenderer.StyleVideoFill
+                    : BaseVideoRenderer.StyleVideoFit;
 
         public sealed class SessionOptions : Session.SessionOptions
         {
