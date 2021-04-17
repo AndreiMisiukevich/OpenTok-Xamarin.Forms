@@ -15,7 +15,7 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <NuGetPackageImportStamp>
@@ -53,19 +53,18 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1451" />
-    <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.3" />
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.3" />
-    <PackageReference Include="Xamarin.Android.Support.v4" Version="28.0.0.3" />
-    <PackageReference Include="Xamarin.Android.Support.v7.CardView" Version="28.0.0.3" />
-    <PackageReference Include="Xamarin.Android.Support.v7.MediaRouter" Version="28.0.0.3" />
-    <PackageReference Include="Xamarin.Android.Support.Core.Utils" Version="28.0.0.3" />
-    <PackageReference Include="Xamarin.Android.Support.CustomTabs" Version="28.0.0.3" />
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
+    <PackageReference Include="Xamarin.Forms">
+      <Version>5.0.0.2012</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.OpenTok.Android">
+      <Version>2.18.1</Version>
     </PackageReference>
     <PackageReference Include="Plugin.CurrentActivity">
       <Version>2.1.0.4</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.AndroidX.AppCompat.Resources">
+      <Version>1.1.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -108,13 +107,13 @@
       <Project>{C2457FED-C235-4A39-8728-1E78A1C01DC4}</Project>
       <Name>Xamarin.Forms.OpenTok</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Lib\Xamarin.Forms.OpenTok.Android\Xamarin.Forms.OpenTok.Android.csproj">
-      <Project>{81B7D386-5D4D-42E7-9F60-93E6F1D1FA0C}</Project>
-      <Name>Xamarin.Forms.OpenTok.Android</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Xamarin.Forms.OpenTok.Sample\Xamarin.Forms.OpenTok.Sample.csproj">
       <Project>{4D809EEA-4228-4771-8C2A-7EDDE7B92606}</Project>
       <Name>Xamarin.Forms.OpenTok.Sample</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lib\Xamarin.Forms.OpenTok.Android\Xamarin.Forms.OpenTok.Android.csproj">
+      <Project>{5EF6E2B8-0604-4A06-BE08-66C1F6794C1E}</Project>
+      <Name>Xamarin.Forms.OpenTok.Android</Name>
     </ProjectReference>
   </ItemGroup>
  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

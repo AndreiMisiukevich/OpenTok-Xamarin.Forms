@@ -1,6 +1,4 @@
 ﻿using Xamarin.Forms.OpenTok.Service;
-using System.Net.Http;
-using Newtonsoft.Json;
 
 namespace Xamarin.Forms.OpenTok.Sample
 {
