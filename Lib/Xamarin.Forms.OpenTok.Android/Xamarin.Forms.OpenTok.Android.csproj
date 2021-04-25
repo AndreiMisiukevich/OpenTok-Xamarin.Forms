@@ -29,7 +29,6 @@
     <WarningLevel>4</WarningLevel>
     <AndroidSigningKeyAlias></AndroidSigningKeyAlias>
     <AndroidDexTool></AndroidDexTool>
-    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
     <AndroidDexTool>d8</AndroidDexTool>
     <AndroidSigningKeyAlias></AndroidSigningKeyAlias>
   </PropertyGroup>

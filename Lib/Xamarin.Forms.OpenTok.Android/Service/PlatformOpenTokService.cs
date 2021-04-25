@@ -62,18 +62,22 @@ namespace Xamarin.Forms.OpenTok.Android.Service
                 EndSession();
                 IsSessionStarted = true;
 
-                using (var builder = new Session.Builder(CrossCurrentActivity.Current.AppContext, ApiKey, SessionId)
-                    .SessionOptions(new SessionOptions()))
+                CrossCurrentActivity.Current.Activity.RunOnUiThread(() =>
                 {
-                    Session = builder.Build();
-                    Session.ConnectionDestroyed += OnConnectionDestroyed;
-                    Session.Connected += OnConnected;
-                    Session.StreamReceived += OnStreamReceived;
-                    Session.StreamDropped += OnStreamDropped;
-                    Session.Error += OnError;
-                    Session.Signal += OnSignal;
-                    Session.Connect(UserToken);
-                }
+                    using (var builder = new Session.Builder(CrossCurrentActivity.Current.AppContext, ApiKey, SessionId)
+                    .SessionOptions(new SessionOptions()))
+                    {
+                        Session = builder.Build();
+                        Session.ConnectionDestroyed += OnConnectionDestroyed;
+                        Session.Connected += OnConnected;
+                        Session.StreamReceived += OnStreamReceived;
+                        Session.StreamDropped += OnStreamDropped;
+                        Session.Error += OnError;
+                        Session.Signal += OnSignal;
+                        Session.Connect(UserToken);
+                    }
+                });
+
                 return true;
             }
         }
